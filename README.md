@@ -49,6 +49,11 @@ npm i
 npx supabase start
 ```
 
+1. Generation of Jwt secret:
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
 1. Add a .env file
 
    1. Create a `.env` file in your root directory
@@ -61,6 +66,7 @@ npx supabase start
    SUPABASE_KEY='supabase_key';
    FRONTEND_URL='http://localhost:3001';
    NODE_ENV='development';
+   JWT_SECRET=[GENERATE JWT SECRET]
    ```
 
 2. Update the database by the Prisma migrations with these commands:
