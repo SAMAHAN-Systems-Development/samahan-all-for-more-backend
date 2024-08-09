@@ -1,5 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { SupabaseService } from 'supabase/supabase.service';
+import { Injectable } from '@nestjs/common';
 import { LoginDto } from './auth.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
