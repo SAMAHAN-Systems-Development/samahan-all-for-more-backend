@@ -2,7 +2,6 @@
 
 import { Injectable } from '@nestjs/common';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { decode } from 'base64-arraybuffer';
 @Injectable()
 export class SupabaseService {
   private supabase: SupabaseClient;

@@ -4,7 +4,6 @@ import { SupabaseService } from '../supabase/supabase.service';
 const prisma = new PrismaService();
 const supabase = new SupabaseService();
 
-
 async function seedUsers() {
   const users = [
     {
