@@ -1,5 +1,6 @@
 import { PrismaService } from '../src/prisma/prisma.service';
 import { SupabaseService } from '../supabase/supabase.service';
+import { faker } from '@faker-js/faker';
 
 const prisma = new PrismaService();
 const supabase = new SupabaseService();
@@ -41,14 +42,96 @@ async function seedUsers() {
       userType: userData.userType,
       supabaseUserId: user.id,
     });
-    // idx++;
   }
 
   await prisma.user.createMany({ data: userList });
 }
 
+async function seedLocations() {
+  const locations = Array.from({ length: 30 }).map(() => ({
+    name: faker.company.name(),
+    address: faker.location.streetAddress(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }));
+
+  await prisma.location.createMany({ data: locations });
+}
+
+async function seedEvents() {
+  const locations = await prisma.location.findMany();
+  const events = Array.from({ length: 50 }).map(() => ({
+    location_id: faker.helpers.arrayElement(locations).id,
+    name: faker.lorem.words(3),
+    description: faker.lorem.paragraph(),
+    registration_link: faker.internet.url(),
+    start_time: faker.date.future(),
+    end_time: faker.date.future(),
+    created_at: new Date(),
+    updated_at: new Date(),
+  }));
+
+  await prisma.event.createMany({ data: events });
+}
+
+async function seedPosters() {
+  const events = await prisma.event.findMany();
+  const posters = Array.from({ length: 50 }).map(() => ({
+    event_id: faker.helpers.arrayElement(events).id,
+    image_url: faker.image.url(),
+    description: faker.lorem.sentence(),
+    created_at: new Date(),
+    updated_at: new Date(),
+  }));
+
+  await prisma.poster.createMany({ data: posters });
+}
+
+async function seedCategories() {
+  const categories = Array.from({ length: 30 }).map(() => ({
+    name: faker.commerce.department(),
+    description: faker.lorem.sentence(),
+    created_at: new Date(),
+    updated_at: new Date(),
+  }));
+
+  await prisma.category.createMany({ data: categories });
+}
+
+async function seedBulletins() {
+  const categories = await prisma.category.findMany();
+  const bulletins = Array.from({ length: 50 }).map(() => ({
+    category_id: faker.helpers.arrayElement(categories).id,
+    title: faker.lorem.sentence(),
+    content: faker.lorem.paragraphs(3),
+    author: faker.name.fullName(),
+    created_at: new Date(),
+    updated_at: new Date(),
+  }));
+
+  await prisma.bulletin.createMany({ data: bulletins });
+}
+
+async function seedPDFAttachments() {
+  const bulletins = await prisma.bulletin.findMany();
+  const pdfAttachments = Array.from({ length: 50 }).map(() => ({
+    bulletin_id: faker.helpers.arrayElement(bulletins).id,
+    file_path: faker.system.filePath(),
+    created_at: new Date(),
+    updated_at: new Date(),
+  }));
+
+  await prisma.pDFAttachment.createMany({ data: pdfAttachments });
+}
+
 async function main() {
   await seedUsers();
+  await seedLocations();
+  await seedEvents();
+  await seedPosters();
+  await seedCategories();
+  await seedBulletins();
+  await seedPDFAttachments();
 }
 
 main()

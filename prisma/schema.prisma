@@ -16,3 +16,66 @@ model User {
   email          String   @unique
   userType       String
 }
+
+model Location {
+  id        Int      @id @default(autoincrement())
+  name      String
+  address   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  events    Event[]
+}
+
+model Event {
+  id               Int      @id @default(autoincrement())
+  location_id      Int
+  name             String
+  description      String
+  registration_link String
+  start_time       DateTime
+  end_time         DateTime
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+  location         Location @relation(fields: [location_id], references: [id])
+  posters          Poster[]
+}
+
+model Poster {
+  id          Int      @id @default(autoincrement())
+  event_id    Int
+  image_url   String
+  description String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  event       Event    @relation(fields: [event_id], references: [id])
+}
+
+model Bulletin {
+  id          Int       @id @default(autoincrement())
+  category_id Int
+  title       String
+  content     String
+  author      String
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  category    Category  @relation(fields: [category_id], references: [id])
+  pdfAttachments PDFAttachment[]
+}
+
+model Category {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  bulletins   Bulletin[]
+}
+
+model PDFAttachment {
+  id          Int       @id @default(autoincrement())
+  bulletin_id Int
+  file_path   String
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  bulletin    Bulletin  @relation(fields: [bulletin_id], references: [id])
+}
