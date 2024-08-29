@@ -22,54 +22,54 @@
 1. Clone the Repository:
 
 ```bash
-git clone https://github.com/SaaammmyyyS/SAMAHAN-backend-2024
+git clone https://github.com/SAMAHAN-Systems-Development/samahan-all-for-more-backend.git
 ```
 
-1. Fetch the updates:
+2. Fetch the updates:
 
 ```bash
 git fetch
 ```
 
-1. Switch to the branch of your ticket, for example:
+3. Switch to the branch of your ticket, for example:
 
 ```bash
-git checkout 1-login-of-facilitator-cashier-and-admin
+git checkout 3-add-category
 ```
 
-1. Install the libraries with this command:
+4. Install the libraries with this command:
 
 ```bash
 npm i
 ```
 
-1. Install and create the docker containers with this command (make sure that you already started your docker application):
+5. Install and create the docker containers with this command (make sure that you already started your docker application):
 
 ```bash
 npx supabase start
 ```
 
-1. Generation of Jwt secret:
+6. Generation of Jwt secret:
 ```bash
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ```
 
-1. Add a .env file
+7. Add a .env file
 
    1. Create a `.env` file in your root directory
    2. Add this to your `.env` file:
 
    ```bash
-   DATABASE_URL='postgresql://postgres:postgres@localhost:54322/postgres?schema=public';
-   DIRECT_URL='postgresql://postgres:postgres@localhost:54322/postgres?schema=public';
-   SUPABASE_URL='http://127.0.0.1:54321';
-   SUPABASE_KEY='supabase_key';
-   FRONTEND_URL='http://localhost:3001';
-   NODE_ENV='development';
+   DATABASE_URL='postgresql://postgres:postgres@localhost:54322/postgres?schema=public'
+   DIRECT_URL='postgresql://postgres:postgres@localhost:54322/postgres?schema=public'
+   SUPABASE_URL='http://127.0.0.1:54321'
+   SUPABASE_KEY='supabase_key'
+   FRONTEND_URL='http://localhost:3001'
+   NODE_ENV='development'
    JWT_SECRET=[GENERATE JWT SECRET]
    ```
 
-2. Update the database by the Prisma migrations with these commands:
+8. Update the database by the Prisma migrations with these commands:
 
 ```bash
 npm run prisma:migrate:reset
@@ -89,19 +89,19 @@ If you just turned your pc on and you want to start the application, run the fol
 git pull origin main
 ```
 
-1. Install the libraries
+2. Install the libraries
 
 ```bash
 npm i
 ```
 
-1. Run the docker containers (make sure that you already started your docker application)
+3. Run the docker containers (make sure that you already started your docker application)
 
 ```bash
 npx supabase start
 ```
 
-1. Run the NestJS backend
+4. Run the NestJS backend
 
 ```bash
 npm run start
