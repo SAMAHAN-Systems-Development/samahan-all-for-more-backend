@@ -2,7 +2,9 @@ import {
   BadRequestException,
   Body,
   Controller,
+  HttpException,
   HttpStatus,
+  InternalServerErrorException,
   Post,
   UploadedFile,
   UseGuards,
@@ -28,17 +30,25 @@ export class BulletinController {
       transform: true,
     }),
   )
-  @UseInterceptors(FileInterceptor('pdf_attachment'))
+  @UseInterceptors(
+    FileInterceptor('pdf_attachment', {
+      fileFilter: (_req, file, callback) => {
+        if (!file.mimetype.match(/\/(pdf)$/)) {
+          return callback(
+            new BadRequestException('Only PDF files are allowed'),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+    }),
+  )
   async addBulletin(
     @UploadedFile() pdfAttachment: Express.Multer.File,
     @Body()
     addBulletinDto: AddBulletinDTO,
   ) {
     try {
-      if (pdfAttachment.mimetype !== 'application/pdf' && !pdfAttachment) {
-        throw new BadRequestException('Only PDF file are only allowed');
-      }
-
       await this.bulletinService.createBulletin(addBulletinDto, pdfAttachment);
 
       return {
@@ -46,11 +56,16 @@ export class BulletinController {
         message: 'Bulletin created successfully',
       };
     } catch (error) {
-      return {
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: error.message || 'An unexpected error occurred',
-        error: error.message,
-      };
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException(error.message);
+      } else if (error instanceof HttpException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else {
+        // Fallback to a generic 500 error
+        throw new InternalServerErrorException(
+          error.message || 'An unexpected error occurred',
+        );
+      }
     }
   }
 }
