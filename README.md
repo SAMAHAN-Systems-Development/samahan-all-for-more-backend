@@ -67,6 +67,7 @@ node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
    FRONTEND_URL='http://localhost:3001'
    NODE_ENV='development'
    JWT_SECRET=[GENERATE JWT SECRET]
+   STORAGE_BUCKET = 'pdfAttachments'
    ```
 
 8. Update the database by the Prisma migrations with these commands:

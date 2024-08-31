@@ -44,7 +44,7 @@ export class BulletinService {
 
         const { error } = await this.supabaseService
           .getSupabase()
-          .storage.from('pdfAttachments')
+          .storage.from(process.env.STORAGE_BUCKET)
           .upload(uniqueFileName, pdf_attachment.buffer, {
             contentType: 'application/pdf',
             cacheControl: '3600',

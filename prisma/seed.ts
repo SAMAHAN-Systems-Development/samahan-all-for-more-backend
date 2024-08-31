@@ -1,9 +1,46 @@
+import path from 'path';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { SupabaseService } from '../supabase/supabase.service';
 import { faker } from '@faker-js/faker';
 
 const prisma = new PrismaService();
 const supabase = new SupabaseService();
+
+async function createBucketIfNotExists() {
+  try {
+    const bucketName = process.env.STORAGE_BUCKET;
+    // List all buckets
+    const { data: buckets, error: listError } = await supabase
+      .getSupabase()
+      .storage.listBuckets();
+    if (listError) {
+      throw new Error(`Failed to list buckets: ${listError.message}`);
+    }
+
+    // Check if the bucket already exists
+    const bucketExists = buckets.some((bucket) => bucket.name === bucketName);
+
+    if (!bucketExists) {
+      // Create the bucket if it does not exist
+      const { data, error } = await supabase
+        .getSupabase()
+        .storage.createBucket(bucketName, {
+          public: false,
+          allowedMimeTypes: ['application/pdf'],
+        });
+
+      if (error) {
+        throw new Error(`Failed to create bucket: ${error.message}`);
+      }
+
+      console.log('Bucket created successfully:', data);
+    } else {
+      console.log('Bucket already exists');
+    }
+  } catch (error) {
+    console.error('Error managing bucket:', error);
+  }
+}
 
 async function seedUsers() {
   const users = [
@@ -125,6 +162,7 @@ async function seedPDFAttachments() {
 }
 
 async function main() {
+  await createBucketIfNotExists();
   await seedUsers();
   await seedLocations();
   await seedEvents();
