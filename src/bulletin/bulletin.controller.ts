@@ -13,7 +13,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express'; // Import FileInterceptor from the correct module
 import { BulletinService } from './bulletin.service';
 import { AuthGuard } from '../auth/auth.guard';
-import { AddBulletinDTO } from './bulletin.dto';
+import { AddBulletinDTO } from './createBulletin.dto';
 
 @Controller('/api/bulletins')
 export class BulletinController {
@@ -30,18 +30,18 @@ export class BulletinController {
   )
   @UseInterceptors(FileInterceptor('pdf_attachment'))
   async addBulletin(
-    @UploadedFile() pdf_attachment: Express.Multer.File,
+    @UploadedFile() pdfAttachment: Express.Multer.File,
     @Body()
     addBulletinDto: AddBulletinDTO,
   ) {
     try {
-      if (pdf_attachment.mimetype !== 'application/pdf' && !pdf_attachment) {
+      if (pdfAttachment.mimetype !== 'application/pdf' && !pdfAttachment) {
         throw new BadRequestException('Only PDF file are only allowed');
       }
 
-      const result = await this.bulletinService.addBulletin(
+      const result = await this.bulletinService.createBulletin(
         addBulletinDto,
-        pdf_attachment,
+        pdfAttachment,
       );
 
       return {

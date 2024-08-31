@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupabaseService } from '../../supabase/supabase.service';
-import { AddBulletinDTO } from './bulletin.dto';
+import { AddBulletinDTO } from './createBulletin.dto';
 
 @Injectable()
 export class BulletinService {
@@ -10,9 +10,9 @@ export class BulletinService {
     private readonly supabaseService: SupabaseService,
   ) {}
 
-  async addBulletin(
+  async createBulletin(
     addBulletinDto: AddBulletinDTO,
-    pdf_attachment: Express.Multer.File,
+    pdfAttachment: Express.Multer.File,
   ) {
     return this.prismaService.$transaction(async (tx) => {
       try {
@@ -24,7 +24,7 @@ export class BulletinService {
             author: addBulletinDto.author,
           },
         });
-        if (!pdf_attachment) {
+        if (!pdfAttachment) {
           return bulletin;
         }
         const now = new Date();
@@ -32,7 +32,7 @@ export class BulletinService {
           2,
           '0',
         )}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()}`;
-        const sanitizedFileName = pdf_attachment.originalname
+        const sanitizedFileName = pdfAttachment.originalname
           .replace(/\s+/g, '-')
           .replace(/[^a-zA-Z0-9.-]/g, '');
         const uniqueFileName = `${formattedDate}-${sanitizedFileName}`;
@@ -41,7 +41,7 @@ export class BulletinService {
         const { error } = await this.supabaseService
           .getSupabase()
           .storage.from(process.env.STORAGE_BUCKET)
-          .upload(uniqueFileName, pdf_attachment.buffer, {
+          .upload(uniqueFileName, pdfAttachment.buffer, {
             contentType: 'application/pdf',
             cacheControl: '3600',
             upsert: true,
@@ -51,14 +51,14 @@ export class BulletinService {
           throw new Error(`Failed to upload file: ${error.message}`);
         }
 
-        const pDFAttachment = await tx.pDFAttachment.create({
+        const pdfAttachmentData = await tx.pDFAttachment.create({
           data: {
             bulletin_id: bulletin.id,
             file_path: filePath,
           },
         });
 
-        return { ...bulletin, pDFAttachment };
+        return { ...bulletin, pdfAttachmentData };
       } catch (error) {
         throw error;
       }

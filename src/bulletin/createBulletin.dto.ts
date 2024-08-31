@@ -24,7 +24,7 @@ function IsCategoryIdExists(validationOptions?: ValidationOptions) {
 export class AddBulletinDTO {
   @Type(() => Number)
   @IsInt({ message: 'Category ID must be an integer' })
-  @IsCategoryIdExists({ message: 'Category doesnt exists in the database' })
+  @IsCategoryIdExists({ message: 'Category doesnt exists' })
   @IsNotEmpty({ message: 'Category is required' })
   category_id: number;
 
