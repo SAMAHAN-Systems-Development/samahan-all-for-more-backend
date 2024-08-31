@@ -1,6 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BulletinController } from './bulletin.controller';
 import { BulletinService } from './bulletin.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { SupabaseService } from '../../supabase/supabase.service';
+import { AuthGuard } from '../auth/auth.guard';
+import { JwtService } from '@nestjs/jwt';
 
 describe('BulletinController', () => {
   let controller: BulletinController;
@@ -8,7 +12,13 @@ describe('BulletinController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [BulletinController],
-      providers: [BulletinService],
+      providers: [
+        BulletinService,
+        PrismaService,
+        SupabaseService,
+        AuthGuard,
+        JwtService,
+      ],
     }).compile();
 
     controller = module.get<BulletinController>(BulletinController);
