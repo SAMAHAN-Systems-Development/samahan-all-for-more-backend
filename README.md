@@ -16,7 +16,6 @@
 - [Docker](https://www.docker.com/) - Containerization Tool
 - [Git](https://git-scm.com/)/[Github](https://github.com/) - Version Control
 
-
 ### Setting up your application
 
 1. Clone the Repository:
@@ -50,6 +49,7 @@ npx supabase start
 ```
 
 6. Generation of Jwt secret:
+
 ```bash
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ```
@@ -111,3 +111,72 @@ npm run start
   ```bash
   npx supabase stop
   ```
+
+### API
+
+**POST /api/category**
+
+Request:
+
+```
+method: POST
+name: string, required
+description: string, required
+```
+
+Sample Request:
+
+```
+{
+   "name": "Memorandum",
+   "description": "Official notices and communications from SAMAHAN, covering updates, announcements, and directives for the student body."
+}
+```
+
+Success Response:
+
+```
+status: 201 Created
+id: int
+name: string
+description: string
+created_at: string
+updated_at: string
+```
+
+Sample Success Response:
+
+**201 Created**
+
+```
+{
+   "id": 45,
+   "name": "Memorandum",
+   "description": "Official notices and communications from SAMAHAN, covering updates, announcements, and directives for the student body.",
+   "created_at": "2024-08-31T18:22:28.188Z",
+   "updated_at": "2024-08-31T18:22:28.188Z"
+}
+```
+
+Error Response:
+
+```
+status: 400 Bad Request
+message: array[string]
+error: string
+statusCode: int
+```
+
+Sample Error Response:
+
+**400 Bad Request**
+
+```
+{
+   "message": [
+      "name should not be empty"
+   ],
+   "error": "Bad Request",
+   "statusCode": 400
+}
+```
