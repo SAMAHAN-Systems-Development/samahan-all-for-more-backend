@@ -119,6 +119,7 @@ async function seedPosters() {
     description: faker.lorem.sentence(),
     created_at: new Date(),
     updated_at: new Date(),
+    deleted_at: null,
   }));
 
   await prisma.poster.createMany({ data: posters });
@@ -144,6 +145,7 @@ async function seedBulletins() {
     author: faker.name.fullName(),
     created_at: new Date(),
     updated_at: new Date(),
+    deleted_at: null,
   }));
 
   await prisma.bulletin.createMany({ data: bulletins });
@@ -156,6 +158,7 @@ async function seedPDFAttachments() {
     file_path: faker.system.filePath(),
     created_at: new Date(),
     updated_at: new Date(),
+    deleted_at: null,
   }));
 
   await prisma.pDFAttachment.createMany({ data: pdfAttachments });

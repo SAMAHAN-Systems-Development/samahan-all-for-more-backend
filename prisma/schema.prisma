@@ -47,6 +47,7 @@ model Poster {
   description String
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
+  deleted_at  DateTime?
   event       Event    @relation(fields: [event_id], references: [id])
 }
 
@@ -58,6 +59,7 @@ model Bulletin {
   author      String
   created_at  DateTime  @default(now())
   updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
   category    Category  @relation(fields: [category_id], references: [id])
   pdfAttachments PDFAttachment[]
 }
@@ -77,5 +79,6 @@ model PDFAttachment {
   file_path   String
   created_at  DateTime  @default(now())
   updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
   bulletin    Bulletin  @relation(fields: [bulletin_id], references: [id])
 }
