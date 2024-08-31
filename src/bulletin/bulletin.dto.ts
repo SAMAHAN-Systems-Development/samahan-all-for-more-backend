@@ -1,9 +1,31 @@
-import { IsString, IsNotEmpty, IsInt } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsInt,
+  registerDecorator,
+  ValidationOptions,
+} from 'class-validator';
 import { Type } from 'class-transformer';
+import { IsCategoryIdExistsConstraint } from './bulletin.custom.decorator';
+
+function IsCategoryIdExists(validationOptions?: ValidationOptions) {
+  return function (object: object, propertyName: string) {
+    registerDecorator({
+      name: 'IsCategoryIdExists',
+      target: object.constructor,
+      propertyName: propertyName,
+      options: validationOptions,
+      constraints: [],
+      validator: IsCategoryIdExistsConstraint,
+    });
+  };
+}
 
 export class AddBulletinDTO {
   @Type(() => Number)
   @IsInt({ message: 'Category ID must be an integer' })
+  @IsCategoryIdExists({ message: 'Category doesnt exists in the database' })
+  @IsNotEmpty({ message: 'Category is required' })
   category_id: number;
 
   @IsString({ message: 'Title must be a string' })

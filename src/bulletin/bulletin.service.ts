@@ -27,8 +27,15 @@ export class BulletinService {
         if (!pdf_attachment) {
           return bulletin;
         }
-
-        const uniqueFileName = `${Date.now()}-${pdf_attachment.originalname}`;
+        const now = new Date();
+        const formattedDate = `${String(now.getDate()).padStart(
+          2,
+          '0',
+        )}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()}`;
+        const sanitizedFileName = pdf_attachment.originalname
+          .replace(/\s+/g, '-')
+          .replace(/[^a-zA-Z0-9.-]/g, '');
+        const uniqueFileName = `${formattedDate}-${sanitizedFileName}`;
         const filePath = uniqueFileName;
 
         const { error } = await this.supabaseService
@@ -37,7 +44,7 @@ export class BulletinService {
           .upload(uniqueFileName, pdf_attachment.buffer, {
             contentType: 'application/pdf',
             cacheControl: '3600',
-            upsert: false,
+            upsert: true,
           });
 
         if (error) {
@@ -53,8 +60,7 @@ export class BulletinService {
 
         return { ...bulletin, pDFAttachment };
       } catch (error) {
-        console.error(error.message);
-        throw new Error('An error occurred while uploading the PDF');
+        throw error;
       }
     });
   }

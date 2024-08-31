@@ -35,7 +35,7 @@ export class BulletinController {
     addBulletinDto: AddBulletinDTO,
   ) {
     try {
-      if (pdf_attachment.mimetype !== 'application/pdf') {
+      if (pdf_attachment.mimetype !== 'application/pdf' && !pdf_attachment) {
         throw new BadRequestException('Only PDF file are only allowed');
       }
 
