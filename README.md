@@ -16,7 +16,6 @@
 - [Docker](https://www.docker.com/) - Containerization Tool
 - [Git](https://git-scm.com/)/[Github](https://github.com/) - Version Control
 
-
 ### Setting up your application
 
 1. Clone the Repository:
@@ -50,6 +49,7 @@ npx supabase start
 ```
 
 6. Generation of Jwt secret:
+
 ```bash
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ```
@@ -109,6 +109,84 @@ npm run start
 ```
 
 - 📌 After you finish programming, run this command to stop the docker containers:
+
   ```bash
   npx supabase stop
   ```
+
+## API
+
+**/api/bulletins**
+
+Request:
+
+```
+
+method: POST
+cathegory_id: int, required
+title: string, required
+content: string, required
+author: string, required
+pdf_attachemnt: pdf, optional
+```
+
+Sample Request:
+
+### 201 Created
+
+Happens when either pdf is provided or not.
+```
+{
+  "statusCode": 201,
+  "message": "Bulletin created successfully"
+}
+```
+
+### Error Response:
+
+**400 Bad Request**
+
+Specific message appears on which field is mising
+
+```
+{
+  "message": [
+    "Category doesnt exists",
+    "Title is required",
+    "Content is required",
+    "Author is required"
+  ],
+  "error": "Bad Request",
+  "statusCode": 400
+}
+```
+
+**500 Internal Server Error**
+
+Somethings wrong with supabse auth session, either not set or bad jwt access token
+```
+{
+  "message": "Failed to upload file: jwt malformed",
+  "error": "Internal Server Error",
+  "statusCode": 500
+}
+```
+
+Bucket has not been created in db 
+
+```
+{
+  "message": "Failed to upload file: Bucket not found",
+  "error": "Internal Server Error",
+  "statusCode": 500
+}
+```
+
+Storage_Key is not set in .env
+```
+{
+  "message": "Failed to upload file: Route POST:/object/01-09-2024-Economic-Feasibility-Financial-Analysis.pdf not found",
+  "error": "Internal Server Error",
+  "statusCode": 500
+}
+```
