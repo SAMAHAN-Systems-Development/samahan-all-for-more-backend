@@ -61,6 +61,7 @@
     "qrcode": "^1.5.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
+    "samahan-website-2024": "file:",
     "socket.io": "^4.7.5",
     "uuid": "^9.0.1"
   },

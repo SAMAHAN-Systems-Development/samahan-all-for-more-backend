@@ -7,10 +7,13 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express'; // Import FileInterceptor from the correct module
 import { BulletinService } from './bulletin.service';
 import { AuthGuard } from '../auth/auth.guard';
+import { AddBulletinDTO } from './bulletin.dto';
 
 @Controller('/api/bulletins')
 export class BulletinController {
@@ -18,33 +21,22 @@ export class BulletinController {
 
   @Post()
   @UseGuards(AuthGuard)
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  )
   @UseInterceptors(FileInterceptor('pdf_attachment'))
   async addBulletin(
     @UploadedFile() pdf_attachment: Express.Multer.File,
     @Body()
-    body: any,
+    addBulletinDto: AddBulletinDTO,
   ) {
-    const cathegory_id = body['cathegory_id'];
-
-    const parsedCathegoryId = isNaN(Number(cathegory_id))
-      ? null
-      : Number(cathegory_id);
-
-    const addBulletinDto = {
-      category_id: parsedCathegoryId,
-      title: body['title'],
-      author: body['author'],
-      content: body['content'],
-    };
-
     try {
-      if (
-        addBulletinDto.category_id <= 0 ||
-        !addBulletinDto.title ||
-        !addBulletinDto.author ||
-        !addBulletinDto.content
-      ) {
-        throw new BadRequestException('Invalid valid fields');
+      if (pdf_attachment.mimetype !== 'application/pdf') {
+        throw new BadRequestException('Only PDF file are only allowed');
       }
 
       const result = await this.bulletinService.addBulletin(

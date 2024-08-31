@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupabaseService } from '../../supabase/supabase.service';
 import { AddBulletinDTO } from './bulletin.dto';
@@ -16,14 +16,6 @@ export class BulletinService {
   ) {
     return this.prismaService.$transaction(async (tx) => {
       try {
-        const category = await tx.category.findUnique({
-          where: { id: addBulletinDto.category_id },
-        });
-
-        if (!category) {
-          throw new BadRequestException('Category not found');
-        }
-
         const bulletin = await tx.bulletin.create({
           data: {
             category_id: addBulletinDto.category_id,
@@ -34,9 +26,6 @@ export class BulletinService {
         });
         if (!pdf_attachment) {
           return bulletin;
-        }
-        if (pdf_attachment.mimetype !== 'application/pdf') {
-          throw new BadRequestException('Only PDF files are allowed');
         }
 
         const uniqueFileName = `${Date.now()}-${pdf_attachment.originalname}`;
