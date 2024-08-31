@@ -39,15 +39,11 @@ export class BulletinController {
         throw new BadRequestException('Only PDF file are only allowed');
       }
 
-      const result = await this.bulletinService.createBulletin(
-        addBulletinDto,
-        pdfAttachment,
-      );
+      await this.bulletinService.createBulletin(addBulletinDto, pdfAttachment);
 
       return {
         statusCode: HttpStatus.CREATED,
         message: 'Bulletin created successfully',
-        data: result,
       };
     } catch (error) {
       return {
