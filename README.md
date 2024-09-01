@@ -127,7 +127,7 @@ cathegory_id: int, required
 title: string, required
 content: string, required
 author: string, required
-pdf_attachemnt: pdf, optional
+pdf_attachemnt: pdf[], optional
 ```
 
 Sample Request:
