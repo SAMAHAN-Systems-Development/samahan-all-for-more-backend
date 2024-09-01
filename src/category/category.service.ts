@@ -23,8 +23,14 @@ export class CategoryService {
       data,
     });
 
+    const existingCategory = await this.prisma.category.findUnique({
+      where: { id: id },
+    });
+
     return {
-      message: 'Category successfully updated',
+      id,
+      name: data.name,
+      description: existingCategory.description,
     };
   }
 }
