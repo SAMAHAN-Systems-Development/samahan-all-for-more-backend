@@ -1,5 +1,7 @@
 # **Samahan Backend**
 
+[Link for Documentation](DOCS.md)
+
 ### Tools that needs to be installed:
 
 - Docker (https://docs.docker.com/desktop/install/windows-install/)
@@ -54,21 +56,17 @@ npx supabase start
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ```
 
-7. Add a .env file
+7. Duplicate the `.env.example` file and rename it to `.env.`
 
-   1. Create a `.env` file in your root directory
-   2. Add this to your `.env` file:
+You can accomplish this manually or run this command:
 
-   ```bash
-   DATABASE_URL='postgresql://postgres:postgres@localhost:54322/postgres?schema=public'
-   DIRECT_URL='postgresql://postgres:postgres@localhost:54322/postgres?schema=public'
-   SUPABASE_URL='http://127.0.0.1:54321'
-   SUPABASE_KEY='supabase_key'
-   FRONTEND_URL='http://localhost:3001'
-   NODE_ENV='development'
-   JWT_SECRET=[GENERATE JWT SECRET]
-   STORAGE_BUCKET = 'pdfAttachments'
-   ```
+```
+For Windows:
+copy .env.example .env
+
+For Linux:
+cp .env.example .env
+```
 
 8. Update the database by the Prisma migrations with these commands:
 
@@ -102,6 +100,8 @@ npm i
 npx supabase start
 ```
 
+Note the `service role key` and set the value of `supabase_key` in your .env file to the value of the service role key.
+
 4. Run the NestJS backend
 
 ```bash
@@ -113,222 +113,3 @@ npm run start
   ```bash
   npx supabase stop
   ```
-
-## **API**
-
-### Category
-
-#### **POST /api/category**
-
-Request:
-
-```
-method: POST
-name: string, required
-description: string, required
-```
-
-Sample Request:
-
-```
-{
-   "name": "Memorandum",
-   "description": "Official notices and communications from SAMAHAN, covering updates, announcements, and directives for the student body."
-}
-```
-
-Success Response:
-
-```
-status: 201 Created
-message: string
-```
-
-Sample Success Response:
-
-**201 Created**
-
-```
-{
-   "message": "Category successfully created"
-}
-```
-
-Error Response:
-
-```
-status: 400 Bad Request
-message: array[string]
-error: string
-statusCode: int
-```
-
-Sample Error Response:
-
-**400 Bad Request**
-
-```
-{
-   "message": [
-      "name should not be empty"
-   ],
-   "error": "Bad Request",
-   "statusCode": 400
-}
-```
-
-#### **PUT /api/category/{id}**
-
-Request:
-
-```
-method: PUT
-name: string, optional, must not be empty if provided
-description: string, optional, must not be empty if provided
-```
-
-Sample Request:
-
-```
-{
-   "name": "Memorandum"
-}
-```
-
-Success Response:
-
-```
-status: 200 OK
-message: string
-```
-
-Sample Success Response:
-
-**200 OK**
-
-```
-{
-   "message": "Category successfully updated"
-}
-```
-
-Error Response:
-
-```
-status: 400 Bad Request
-message: array[string]
-error: string
-statusCode: int
-```
-
-Sample Error Response:
-
-**400 Bad Request**
-
-```
-{
-   "message": [
-      "name should not be empty"
-   ],
-   "error": "Bad Request",
-   "statusCode": 400
-}
-```
-
-### Bulletin
-
-**/api/bulletins**
-
-Request:
-
-```
-
-method: POST
-cathegory_id: int, required
-title: string, required
-content: string, required
-author: string, required
-pdf_attachemnt: pdf[], optional
-```
-
-Sample Request:
-
-### 201 Created
-
-Happens when either pdf is provided or not.
-
-```
-{
-  "statusCode": 201,
-  "message": "Bulletin created successfully"
-}
-```
-
-### Error Response:
-
-**400 Bad Request**
-
-Specific message appears on which field is mising
-
-```
-{
-  "message": [
-    "Category doesnt exists",
-    "Title is required",
-    "Content is required",
-    "Author is required"
-  ],
-  "error": "Bad Request",
-  "statusCode": 400
-}
-```
-
-**500 Internal Server Error**
-
-Somethings wrong with supabse auth session, either not set or bad jwt access token
-
-```
-{
-  "message": "Failed to upload file: jwt malformed",
-  "error": "Internal Server Error",
-  "statusCode": 500
-}
-```
-
-Bucket has not been created in db
-
-```
-{
-  "message": "Failed to upload file: Bucket not found",
-  "error": "Internal Server Error",
-  "statusCode": 500
-}
-```
-
-Storage_Key is not set in .env
-
-```
-{
-  "message": "Failed to upload file: Route POST:/object/01-09-2024-Economic-Feasibility-Financial-Analysis.pdf not found",
-  "error": "Internal Server Error",
-  "statusCode": 500
-}
-```
-
-### Responses
-
-**401 Unauthorized**
-
-```
-message: string
-statusCode: int
-```
-
-Sample Response:
-
-```
-{
-   "message": "Unauthorized",
-   "statusCode": 401
-}
-```
