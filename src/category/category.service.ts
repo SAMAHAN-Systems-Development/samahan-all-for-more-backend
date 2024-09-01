@@ -24,7 +24,7 @@ export class CategoryService {
     });
 
     return {
-      message: 'Category successfully edited',
+      message: 'Category successfully updated',
     };
   }
 }
