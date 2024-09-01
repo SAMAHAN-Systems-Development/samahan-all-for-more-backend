@@ -10,8 +10,18 @@ export class BulletinService {
     private readonly supabaseService: SupabaseService,
   ) {}
 
-  async getAllBulletins() {
-    return this.prismaService.bulletin.findMany();
+  async getAllBulletins(offset: number, limit: number) {
+    const skip = offset * limit;
+    return this.prismaService.bulletin.findMany({
+      skip,
+      take: limit,
+      where: {
+        deleted_at: null,
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+    });
   }
 
   async createBulletin(
