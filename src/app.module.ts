@@ -8,7 +8,13 @@ import { BulletinModule } from './bulletin/bulletin.module';
 import { CategoryModule } from './category/category.module';
 
 @Module({
-  imports: [PrismaModule, SupabaseModule, AuthModule, BulletinModule, CategoryModule],
+  imports: [
+    PrismaModule,
+    SupabaseModule,
+    AuthModule,
+    BulletinModule,
+    CategoryModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
