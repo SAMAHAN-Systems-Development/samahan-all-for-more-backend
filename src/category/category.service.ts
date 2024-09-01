@@ -7,8 +7,12 @@ export class CategoryService {
   constructor(private prisma: PrismaService) {}
 
   async createCategory(data: CreateCategoryDto) {
-    return this.prisma.category.create({
+    await this.prisma.category.create({
       data,
     });
+
+    return {
+      messsage: 'Category successfully created',
+    };
   }
 }
