@@ -115,8 +115,7 @@ npm run start
   ```
 
 ### API
-
-**POST /api/category**
+## 1. **POST /api/category**
 
 Request:
 
@@ -190,9 +189,8 @@ Sample Error Response:
 }
 ```
 
-## API
 
-**/api/bulletins**
+## 2. **/api/bulletins**
 
 Request:
 
