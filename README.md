@@ -114,6 +114,82 @@ npm run start
   npx supabase stop
   ```
 
+### API
+
+**POST /api/category**
+
+Request:
+
+```
+method: POST
+name: string, required
+description: string, required
+```
+
+Sample Request:
+
+```
+{
+   "name": "Memorandum",
+   "description": "Official notices and communications from SAMAHAN, covering updates, announcements, and directives for the student body."
+}
+```
+
+Success Response:
+
+```
+status: 201 Created
+message: string
+```
+
+Sample Success Response:
+
+**201 Created**
+
+```
+{
+   "message": "Category successfully created"
+}
+```
+
+Error Response:
+
+```
+status: 400 Bad Request
+message: array[string]
+error: string
+statusCode: int
+```
+
+```
+status: 401 Unauthorized
+message: string
+statusCode: int
+```
+
+Sample Error Response:
+
+**400 Bad Request**
+
+```
+{
+   "message": [
+      "name should not be empty"
+   ],
+   "error": "Bad Request",
+   "statusCode": 400
+}
+```
+
+**401 Unauthorized**
+
+```
+{
+   "message": "Unauthorized",
+   "statusCode": 401
+}
+```
+
 ## API
 
 **/api/bulletins**
@@ -172,7 +248,7 @@ Somethings wrong with supabse auth session, either not set or bad jwt access tok
 }
 ```
 
-Bucket has not been created in db 
+Bucket has not been created in db
 
 ```
 {
