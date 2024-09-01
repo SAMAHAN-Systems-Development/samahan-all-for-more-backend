@@ -127,6 +127,66 @@ Sample Error Response:
 }
 ```
 
+## PUT /api/category/{id}
+
+Request:
+
+```
+method: PUT
+name: string, required
+description: string, optional, must not be empty if provided
+```
+
+Sample Request:
+
+```
+{
+   "name": "Memorandum",
+}
+```
+
+Success Response:
+
+```
+status: 200 OK
+id: int
+name: string
+description: string
+```
+
+Sample Success Response:
+
+**200 OK**
+
+```
+{
+   "id": 1,
+   "name": "Memorandum",
+   "description": "Official notices and communications from SAMAHAN, covering updates, announcements, and directives for the student body."
+}
+```
+
+Error Response:
+
+```
+status: 400 Bad Request, 404 Not Found
+message: string | array[string]
+error: string
+statusCode: int
+```
+
+Sample Error Response:
+
+**404 Not Found**
+
+```
+{
+   "message": "Category with id 31 not found",
+   "error": "Not Found",
+   "statusCode": 404
+}
+```
+
 ## POST /api/bulletins
 
 Request:
