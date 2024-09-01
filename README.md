@@ -114,9 +114,11 @@ npm run start
   npx supabase stop
   ```
 
-### API
+## **API**
 
-**POST /api/category**
+### Category
+
+#### **POST /api/category**
 
 Request:
 
@@ -161,9 +163,61 @@ error: string
 statusCode: int
 ```
 
+Sample Error Response:
+
+**400 Bad Request**
+
 ```
-status: 401 Unauthorized
+{
+   "message": [
+      "name should not be empty"
+   ],
+   "error": "Bad Request",
+   "statusCode": 400
+}
+```
+
+#### **PUT /api/category/{id}**
+
+Request:
+
+```
+method: PUT
+name: string, optional, must not be empty if provided
+description: string, optional, must not be empty if provided
+```
+
+Sample Request:
+
+```
+{
+   "name": "Memorandum"
+}
+```
+
+Success Response:
+
+```
+status: 200 OK
 message: string
+```
+
+Sample Success Response:
+
+**200 OK**
+
+```
+{
+   "message": "Category successfully updated"
+}
+```
+
+Error Response:
+
+```
+status: 400 Bad Request
+message: array[string]
+error: string
 statusCode: int
 ```
 
@@ -181,16 +235,7 @@ Sample Error Response:
 }
 ```
 
-**401 Unauthorized**
-
-```
-{
-   "message": "Unauthorized",
-   "statusCode": 401
-}
-```
-
-## API
+### Bulletin
 
 **/api/bulletins**
 
@@ -211,6 +256,7 @@ Sample Request:
 ### 201 Created
 
 Happens when either pdf is provided or not.
+
 ```
 {
   "statusCode": 201,
@@ -240,6 +286,7 @@ Specific message appears on which field is mising
 **500 Internal Server Error**
 
 Somethings wrong with supabse auth session, either not set or bad jwt access token
+
 ```
 {
   "message": "Failed to upload file: jwt malformed",
@@ -259,10 +306,29 @@ Bucket has not been created in db
 ```
 
 Storage_Key is not set in .env
+
 ```
 {
   "message": "Failed to upload file: Route POST:/object/01-09-2024-Economic-Feasibility-Financial-Analysis.pdf not found",
   "error": "Internal Server Error",
   "statusCode": 500
+}
+```
+
+### Responses
+
+**401 Unauthorized**
+
+```
+message: string
+statusCode: int
+```
+
+Sample Response:
+
+```
+{
+   "message": "Unauthorized",
+   "statusCode": 401
 }
 ```
