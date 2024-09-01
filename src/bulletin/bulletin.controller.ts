@@ -12,7 +12,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express'; // Import FileInterceptor from the correct module
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express'; // Import FileInterceptor from the correct module
 import { BulletinService } from './bulletin.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { AddBulletinDTO } from './createBulletin.dto';
@@ -31,7 +31,7 @@ export class BulletinController {
     }),
   )
   @UseInterceptors(
-    FileInterceptor('pdf_attachment', {
+    FilesInterceptor('pdf_attachments', undefined, {
       fileFilter: (_req, file, callback) => {
         if (!file.mimetype.match(/\/(pdf)$/)) {
           return callback(
@@ -44,16 +44,18 @@ export class BulletinController {
     }),
   )
   async addBulletin(
-    @UploadedFile() pdfAttachment: Express.Multer.File,
+    @UploadedFile() pdfAttachments: Express.Multer.File[],
     @Body()
     addBulletinDto: AddBulletinDTO,
   ) {
     try {
-      await this.bulletinService.createBulletin(addBulletinDto, pdfAttachment);
+      await this.bulletinService.createBulletin(addBulletinDto, pdfAttachments);
 
       return {
         statusCode: HttpStatus.CREATED,
-        message: 'Bulletin created successfully',
+        message: pdfAttachments
+          ? `Bulletin created successfully, and succesfully uploaded ${pdfAttachments.length}`
+          : 'Bulletin created successfully',
       };
     } catch (error) {
       if (error instanceof BadRequestException) {
