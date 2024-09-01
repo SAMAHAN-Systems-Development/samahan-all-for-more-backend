@@ -131,6 +131,7 @@ async function seedCategories() {
     description: faker.lorem.sentence(),
     created_at: new Date(),
     updated_at: new Date(),
+    deleted_at: null,
   }));
 
   await prisma.category.createMany({ data: categories });
