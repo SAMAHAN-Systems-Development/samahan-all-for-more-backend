@@ -143,7 +143,7 @@ async function seedBulletins() {
     category_id: faker.helpers.arrayElement(categories).id,
     title: faker.lorem.sentence(),
     content: faker.lorem.paragraphs(3),
-    author: faker.name.fullName(),
+    author: faker.person.fullName(),
     created_at: new Date(),
     updated_at: new Date(),
     deleted_at: null,
