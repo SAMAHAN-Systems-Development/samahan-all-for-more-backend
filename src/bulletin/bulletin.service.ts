@@ -10,6 +10,10 @@ export class BulletinService {
     private readonly supabaseService: SupabaseService,
   ) {}
 
+  async getAllBulletins() {
+    return this.prismaService.bulletin.findMany();
+  }
+
   async createBulletin(
     addBulletinDto: AddBulletinDTO,
     pdfAttachments: Express.Multer.File[],

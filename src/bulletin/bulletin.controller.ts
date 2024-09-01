@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
   InternalServerErrorException,
+  Get,
   Post,
   UploadedFile,
   UseGuards,
@@ -16,10 +17,16 @@ import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express'; //
 import { BulletinService } from './bulletin.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { AddBulletinDTO } from './createBulletin.dto';
+import { Bulletin } from '@prisma/client';
 
 @Controller('/api/bulletins')
 export class BulletinController {
   constructor(private readonly bulletinService: BulletinService) {}
+
+  @Get()
+  async getAllBulletins(): Promise<Bulletin[]> {
+    return this.bulletinService.getAllBulletins();
+  }
 
   @Post()
   @UseGuards(AuthGuard)
