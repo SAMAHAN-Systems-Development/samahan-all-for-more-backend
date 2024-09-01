@@ -137,11 +137,7 @@ Success Response:
 
 ```
 status: 201 Created
-id: int
-name: string
-description: string
-created_at: string
-updated_at: string
+message: string
 ```
 
 Sample Success Response:
@@ -150,11 +146,7 @@ Sample Success Response:
 
 ```
 {
-   "id": 45,
-   "name": "Memorandum",
-   "description": "Official notices and communications from SAMAHAN, covering updates, announcements, and directives for the student body.",
-   "created_at": "2024-08-31T18:22:28.188Z",
-   "updated_at": "2024-08-31T18:22:28.188Z"
+   "message": "Category successfully created"
 }
 ```
 
@@ -164,6 +156,12 @@ Error Response:
 status: 400 Bad Request
 message: array[string]
 error: string
+statusCode: int
+```
+
+```
+status: 401 Unauthorized
+message: string
 statusCode: int
 ```
 
@@ -178,5 +176,14 @@ Sample Error Response:
    ],
    "error": "Bad Request",
    "statusCode": 400
+}
+```
+
+**401 Unauthorized**
+
+```
+{
+   "message": "Unauthorized",
+   "statusCode": 401
 }
 ```
