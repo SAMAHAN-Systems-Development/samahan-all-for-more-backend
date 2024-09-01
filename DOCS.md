@@ -127,7 +127,7 @@ Sample Error Response:
 }
 ```
 
-## /api/bulletins
+## POST /api/bulletins
 
 Request:
 
