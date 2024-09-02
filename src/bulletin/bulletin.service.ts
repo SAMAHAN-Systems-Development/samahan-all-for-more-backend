@@ -27,6 +27,7 @@ export class BulletinService {
             deleted_at: null,
           },
         },
+        category: true,
       },
     });
   }
