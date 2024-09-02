@@ -68,7 +68,7 @@ Sample Error Response:
 
 # API
 
-## POST /api/category
+## POST /api/categories
 
 Request:
 
@@ -127,7 +127,7 @@ Sample Error Response:
 }
 ```
 
-## PUT /api/category/{id}
+## PUT /api/categories/{id}
 
 Request:
 
@@ -184,6 +184,84 @@ Sample Error Response:
    "message": "Category with id 31 not found",
    "error": "Not Found",
    "statusCode": 404
+}
+```
+
+## GET /api/categories
+
+This endpoint retrieves a list of all categories.
+
+Request
+
+- **Method:** GET
+- No request body or parameters are required.
+
+Sample Request
+
+```
+GET /api/categories
+```
+
+Success Response
+
+- **Status:** 200 OK
+- **Description:** A list of categories.
+
+Sample Success Response
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Technology",
+    "description": "Articles and updates related to technology."
+  },
+  {
+    "id": 2,
+    "name": "Health",
+    "description": "Information and tips on maintaining good health."
+  }
+]
+```
+
+Error Responses
+
+```
+status: 400 Bad Request
+message: array[string]
+error: string
+statusCode: int
+```
+
+Sample Error Responses
+
+**401 Unauthorized**
+
+```json
+{
+  "message": "Unauthorized access.",
+  "error": "Unauthorized",
+  "statusCode": 401
+}
+```
+
+**403 Forbidden**
+
+```json
+{
+  "message": "You do not have permission to access this resource.",
+  "error": "Forbidden",
+  "statusCode": 403
+}
+```
+
+**404 Not Found**
+
+```json
+{
+  "message": "No categories found.",
+  "error": "Not Found",
+  "statusCode": 404
 }
 ```
 

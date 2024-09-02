@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   ParseIntPipe,
   Post,
@@ -12,7 +13,7 @@ import { CreateCategoryDto } from './createCategory.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { UpdateCategoryDto } from './updateCategory.dto';
 
-@Controller('api/category')
+@Controller('api/categories')
 @UseGuards(AuthGuard)
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
@@ -20,6 +21,11 @@ export class CategoryController {
   @Post()
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoryService.createCategory(createCategoryDto);
+  }
+
+  @Get()
+  async findAll() {
+    return this.categoryService.findAllCategories();
   }
 
   @Put(':id')
