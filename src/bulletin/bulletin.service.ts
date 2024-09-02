@@ -21,6 +21,9 @@ export class BulletinService {
       orderBy: {
         created_at: 'desc',
       },
+      include: {
+        pdfAttachments: true,
+      },
     });
   }
 
