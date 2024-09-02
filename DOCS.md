@@ -224,47 +224,6 @@ Sample Success Response
 ]
 ```
 
-Error Responses
-
-```
-status: 400 Bad Request
-message: array[string]
-error: string
-statusCode: int
-```
-
-Sample Error Responses
-
-**401 Unauthorized**
-
-```json
-{
-  "message": "Unauthorized access.",
-  "error": "Unauthorized",
-  "statusCode": 401
-}
-```
-
-**403 Forbidden**
-
-```json
-{
-  "message": "You do not have permission to access this resource.",
-  "error": "Forbidden",
-  "statusCode": 403
-}
-```
-
-**404 Not Found**
-
-```json
-{
-  "message": "No categories found.",
-  "error": "Not Found",
-  "statusCode": 404
-}
-```
-
 ## POST /api/bulletins
 
 Request:
