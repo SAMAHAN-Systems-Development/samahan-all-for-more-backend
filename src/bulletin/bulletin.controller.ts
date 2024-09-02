@@ -27,9 +27,9 @@ export class BulletinController {
 
   @Get()
   async getAllBulletins(
-    @Query() query: { offset: number; limit: number },
+    @Query() query: { offset: number; limit?: number },
   ): Promise<Bulletin[]> {
-    const { offset, limit } = query;
+    const { offset, limit = 10 } = query;
     return this.bulletinService.getAllBulletins(Number(offset), Number(limit));
   }
 
