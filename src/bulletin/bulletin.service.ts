@@ -10,8 +10,8 @@ export class BulletinService {
     private readonly supabaseService: SupabaseService,
   ) {}
 
-  async getAllBulletins(offset: number, limit: number) {
-    const skip = offset * limit;
+  async getAllBulletins(page: number, limit: number) {
+    const skip = (page - 1) * limit;
     return this.prismaService.bulletin.findMany({
       skip,
       take: limit,
@@ -22,7 +22,11 @@ export class BulletinService {
         created_at: 'desc',
       },
       include: {
-        pdfAttachments: true,
+        pdfAttachments: {
+          where: {
+            deleted_at: null,
+          },
+        },
       },
     });
   }
