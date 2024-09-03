@@ -60,9 +60,7 @@ export class CategoryService {
         message: 'Category successfully deleted',
       };
     } catch (error) {
-      if (error.code === 'P2025') {
-        throw new NotFoundException(`Category with id ${id} not found`);
-      }
+      throw new Error(`Failed to delete category id ${id}: ${error.message}`);
     }
   }
 }
