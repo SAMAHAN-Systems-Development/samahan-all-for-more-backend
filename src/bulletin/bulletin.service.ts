@@ -64,6 +64,7 @@ export class BulletinService {
     });
   }
 
+<<<<<<< HEAD
   async updateBulletin(
     id: number,
     updateBulletinDto: BulletinDTO,
@@ -151,5 +152,33 @@ export class BulletinService {
     }));
 
     return uploadedAttachements;
+  }
+
+  async deleteBulletin(id: number) {
+    try {
+      const dateNow = new Date();
+
+      await this.prismaService.bulletin.update({
+        where: { id },
+        data: {
+          deleted_at: dateNow,
+        },
+      });
+
+      await this.prismaService.pDFAttachment.updateMany({
+        where: { bulletin_id: id },
+        data: {
+          deleted_at: dateNow,
+        },
+      });
+
+      return {
+        message: 'Bulletin successfully deleted',
+      };
+    } catch (error) {
+      throw new Error(
+        `Failed to delete bulleting with id ${id}: ${error.message}`,
+      );
+    }
   }
 }

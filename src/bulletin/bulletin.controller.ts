@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -98,6 +99,7 @@ export class BulletinController {
     }
   }
 
+<<<<<<< HEAD
   @Put(':id')
   @UseGuards(AuthGuard)
   @UsePipes(
@@ -161,5 +163,12 @@ export class BulletinController {
         error.message || 'An unexpected error occurred',
       );
     }
+  }
+
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  async deleteBulletin(@Param('id', ParseIntPipe) id: number) {
+    return this.bulletinService.deleteBulletin(+id);
   }
 }
