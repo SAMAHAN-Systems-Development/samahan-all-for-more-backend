@@ -68,7 +68,7 @@ Sample Error Response:
 
 # API
 
-## POST /api/category
+## POST /api/categories
 
 Request:
 
@@ -127,7 +127,7 @@ Sample Error Response:
 }
 ```
 
-## PUT /api/category/{id}
+## PUT /api/categories/{id}
 
 Request:
 
@@ -185,6 +185,43 @@ Sample Error Response:
    "error": "Not Found",
    "statusCode": 404
 }
+```
+
+## GET /api/categories
+
+This endpoint retrieves a list of all categories.
+
+Request
+
+- **Method:** GET
+- No request body or parameters are required.
+
+Sample Request
+
+```
+GET /api/categories
+```
+
+Success Response
+
+- **Status:** 200 OK
+- **Description:** A list of categories.
+
+Sample Success Response
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Technology",
+    "description": "Articles and updates related to technology."
+  },
+  {
+    "id": 2,
+    "name": "Health",
+    "description": "Information and tips on maintaining good health."
+  }
+]
 ```
 
 ## DELETE /api/category/{id}
