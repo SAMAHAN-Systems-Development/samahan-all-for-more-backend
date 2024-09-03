@@ -17,6 +17,10 @@ export class CategoryService {
     };
   }
 
+  async findAllCategories() {
+    return this.prisma.category.findMany();
+  }
+
   async updateCategory(id: number, data: UpdateCategoryDto) {
     try {
       const updatedCategory = await this.prisma.category.update({
