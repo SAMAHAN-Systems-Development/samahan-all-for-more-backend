@@ -268,3 +268,60 @@ Specific message appears on which field is mising
   "statusCode": 400
 }
 ```
+
+## GET /api/bulletins
+This endpoint retrieves a list of all bulletins.
+
+```
+Method: GET
+Path: /api/bulletins
+Query Parameters: 
+- Page: The current page number. Default is 1
+- Limit: The maximum number of items to return per page. Default is 10
+```
+
+Example Requests
+```
+GET /api/bulletins
+GET /api/bulletins?page=2
+GET /api/bulletins?page=2&limit=15
+```
+
+Success Response
+
+- **Status:** 200 OK
+
+Sample Success Response
+
+```json
+[
+  {
+      "id": 50,
+      "category_id": 14,
+      "title": "Stella aeneus amor.",
+      "content": "Culpa aperte subiungo.",
+      "author": "Rafael Kozey",
+      "created_at": "2024-09-01T12:26:00.485Z",
+      "updated_at": "2024-09-01T12:26:00.485Z",
+      "deleted_at": null,
+      "pdfAttachments": [
+         {
+               "id": 26,
+               "bulletin_id": 50,
+               "file_path": "/usr/share/mug_upbeat.avi",
+               "created_at": "2024-09-01T12:26:00.577Z",
+               "updated_at": "2024-09-01T12:26:00.577Z",
+               "deleted_at": null
+         }
+      ],
+      "category": {
+         "id": 14,
+         "name": "Tools",
+         "description": "Cubitum aveho.",
+         "created_at": "2024-09-01T12:26:00.423Z",
+         "updated_at": "2024-09-01T12:26:00.423Z",
+         "deleted_at": null
+      }
+   },
+]
+```
