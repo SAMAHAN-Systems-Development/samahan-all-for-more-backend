@@ -187,6 +187,45 @@ Sample Error Response:
 }
 ```
 
+## DELETE /api/category/{id}
+
+Sample Request:
+
+```
+DELETE /api/category/28
+```
+
+Sample Success Response:
+
+**200 OK**
+
+```
+{
+  "message": "Category successfully deleted"
+}
+```
+
+Error Response:
+
+**400 Bad Request**
+
+```
+{
+  "message": "Category in use, cannot delete",
+  "statusCode": 400
+}
+```
+
+**404 Not Found**
+
+```
+{
+   "message": "Category with id 28 not found",
+   "error": "Not Found",
+   "statusCode": 404
+}
+```
+
 ## POST /api/bulletins
 
 Request:
