@@ -193,10 +193,77 @@ Request:
 
 ```
 method: POST
-cathegory_id: int, required
+category_id: int, required
 title: string, required
 content: string, required
 author: string, required
+pdf_attachemnt: pdf[], optional
+```
+
+
+**201 Created**
+
+Happens when either pdf is provided or not.
+
+Request
+```
+{
+   category_id: 1,
+   title: "something",
+   content: "some content here",
+   author: "John",
+   pdf_attachment: [actual_attachment]
+}
+```
+Response
+```
+{
+  "statusCode": 201,
+  "message": "Bulletin created successfully"
+}
+```
+
+Error Response:
+
+**400 Bad Request**
+
+Specific message appears on which field is mising
+
+Request
+```
+<!-- This is formdata -->
+
+[Object: nul]{
+   category_id: null,
+   title: null,
+   content: null,
+   author: null,
+   pdf_attachment: [actual_attachment]
+}
+```
+Response
+```JSON
+{
+  "message": [
+    "Category doesnt exists",
+    "Title is required",
+    "Content is required",
+    "Author is required"
+  ],
+  "error": "Bad Request",
+  "statusCode": 400
+}
+```
+## PUT /api/bulletins/:id
+
+Request:
+
+```
+method: PUT
+cathegory_id: int, optional
+title: string, optional
+content: string, optional
+author: string, optional
 pdf_attachemnt: pdf[], optional
 ```
 
@@ -206,14 +273,23 @@ Sample Request:
 
 Happens when either pdf is provided or not.
 
+Request:
 ```
-{
-  "statusCode": 201,
-  "message": "Bulletin created successfully"
+@params: 1
+
+<!-- This is formdata -->
+[Object: null] {
+   category_id: 1,
+   author: "Analyn"
 }
 ```
-
-Error Response:
+Response:
+```
+{
+  "statusCode": 200,
+  "message": "Bulletin updated"
+}
+```
 
 **400 Bad Request**
 
@@ -229,5 +305,23 @@ Specific message appears on which field is mising
   ],
   "error": "Bad Request",
   "statusCode": 400
+}
+```
+Params are not numbers !
+```
+{
+    "message": "Validation failed (numeric string is expected)",
+    "error": "Bad Request",
+    "statusCode": 400
+}
+```
+**404 Not Found**
+
+Params are either not in database or isDeleted 
+```
+{
+    "message": "Bulletin with ID 100 does not exists or has been deleted",
+    "error": "Not Found",
+    "statusCode": 404
 }
 ```
