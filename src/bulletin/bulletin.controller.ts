@@ -2,27 +2,38 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
   InternalServerErrorException,
   Post,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express'; // Import FileInterceptor from the correct module
+import { FilesInterceptor } from '@nestjs/platform-express'; // Import FileInterceptor from the correct module
 import { BulletinService } from './bulletin.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { AddBulletinDTO } from './createBulletin.dto';
+import { Bulletin } from '@prisma/client';
 
 @Controller('/api/bulletins')
+@UseGuards(AuthGuard)
 export class BulletinController {
   constructor(private readonly bulletinService: BulletinService) {}
 
+  @Get()
+  async getAllBulletins(
+    @Query() query: { page: number; limit?: number },
+  ): Promise<Bulletin[]> {
+    const { page = 1, limit = 10 } = query;
+    return this.bulletinService.getAllBulletins(Number(page), Number(limit));
+  }
+
   @Post()
-  @UseGuards(AuthGuard)
   @UsePipes(
     new ValidationPipe({
       whitelist: true,
