@@ -6,6 +6,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Delete,
   UseGuards,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
@@ -34,5 +35,10 @@ export class CategoryController {
     @Body() updateCategoryDto: UpdateCategoryDto,
   ) {
     return this.categoryService.updateCategory(id, updateCategoryDto);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    return this.categoryService.deleteCategory(id);
   }
 }
