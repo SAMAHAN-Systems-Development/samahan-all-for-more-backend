@@ -7,6 +7,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { IsCategoryIdExistsConstraint } from './bulletin.custom.decorator';
+import { PartialType } from '@nestjs/swagger';
 
 function IsCategoryIdExists(validationOptions?: ValidationOptions) {
   return function (object: object, propertyName: string) {
@@ -40,3 +41,5 @@ export class AddBulletinDTO {
   @IsNotEmpty({ message: 'Author is required' })
   author: string;
 }
+
+export class UpdateBulletinDTO extends PartialType(AddBulletinDTO) {}

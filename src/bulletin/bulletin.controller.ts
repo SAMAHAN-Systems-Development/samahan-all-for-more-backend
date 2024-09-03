@@ -5,17 +5,21 @@ import {
   HttpException,
   HttpStatus,
   InternalServerErrorException,
+  Param,
+  ParseIntPipe,
   Post,
-  UploadedFile,
+  Put,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express'; // Import FileInterceptor from the correct module
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { BulletinService } from './bulletin.service';
 import { AuthGuard } from '../auth/auth.guard';
-import { AddBulletinDTO } from './createBulletin.dto';
+import { AddBulletinDTO, UpdateBulletinDTO } from './createBulletin.dto';
+import { ValidateNotSoftDeletePipe } from './bulleting.custom.pipe';
 
 @Controller('/api/bulletins')
 export class BulletinController {
@@ -44,7 +48,7 @@ export class BulletinController {
     }),
   )
   async addBulletin(
-    @UploadedFile() pdfAttachments: Express.Multer.File[],
+    @UploadedFiles() pdfAttachments: Express.Multer.File[],
     @Body()
     addBulletinDto: AddBulletinDTO,
   ) {
@@ -68,6 +72,51 @@ export class BulletinController {
           error.message || 'An unexpected error occurred',
         );
       }
+    }
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  )
+  @UseInterceptors(
+    FilesInterceptor('pdf_attachments', undefined, {
+      fileFilter: (_req, file, callback) => {
+        if (!file.mimetype.match(/\/(pdf)$/)) {
+          return callback(
+            new BadRequestException('Only PDF files are allowed'),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  async updateBulletin(
+    @Param('id', ParseIntPipe, ValidateNotSoftDeletePipe) id: number,
+    @UploadedFiles() pdfAttachments: Express.Multer.File[],
+    @Body()
+    updateBulletin: UpdateBulletinDTO,
+  ) {
+    try {
+      await this.bulletinService.updateBulletin(
+        id,
+        updateBulletin,
+        pdfAttachments,
+      );
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Bulletin Updated',
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error.message || 'An unexpected error occurred',
+      );
     }
   }
 }
