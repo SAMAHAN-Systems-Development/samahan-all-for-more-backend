@@ -52,11 +52,8 @@ export class CategoryService {
         };
       }
 
-      await this.prisma.category.update({
+      await this.prisma.category.delete({
         where: { id: id },
-        data: {
-          deleted_at: new Date(),
-        },
       });
 
       return {
