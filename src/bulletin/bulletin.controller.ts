@@ -14,7 +14,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express'; // Import FileInterceptor from the correct module
+import { FilesInterceptor } from '@nestjs/platform-express'; // Import FileInterceptor from the correct module
 import { BulletinService } from './bulletin.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { AddBulletinDTO } from './createBulletin.dto';
