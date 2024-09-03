@@ -66,11 +66,10 @@ model Bulletin {
 
 model Category {
   id          Int        @id @default(autoincrement())
-  name        String
+  name        String     @unique
   description String
   created_at  DateTime   @default(now())
   updated_at  DateTime   @updatedAt
-  deleted_at  DateTime?
   bulletins   Bulletin[]
 }
 
