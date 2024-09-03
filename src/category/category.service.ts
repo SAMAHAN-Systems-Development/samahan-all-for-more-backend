@@ -36,10 +36,8 @@ export class CategoryService {
     }
   }
 
-  // DELETE CATEGORY BY ID
   async deleteCategory(id: number) {
     try {
-      // Check if the category is referenced by any bulletins
       const bulletins = await this.prisma.bulletin.findMany({
         where: { category_id: id },
       });
@@ -50,7 +48,6 @@ export class CategoryService {
         };
       }
 
-      // Proceed with soft deletion if no references found
       await this.prisma.category.update({
         where: { id: id },
         data: {
@@ -65,7 +62,6 @@ export class CategoryService {
       if (error.code === 'P2025') {
         throw new NotFoundException(`Category with id ${id} not found`);
       }
-      throw error; // Re-throw the error if it's not a known code
     }
   }
 }
