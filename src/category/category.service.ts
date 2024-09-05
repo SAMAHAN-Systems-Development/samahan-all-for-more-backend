@@ -21,7 +21,6 @@ export class CategoryService {
         messsage: 'Category successfully created',
       };
     } catch (error) {
-      console.log(error);
       if (error.code === 'P2002') {
         throw new ConflictException(`Category with this name already exists`);
       } else {
