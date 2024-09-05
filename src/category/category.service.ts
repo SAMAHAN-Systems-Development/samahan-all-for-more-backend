@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCategoryDto } from './createCategory.dto';
 import { UpdateCategoryDto } from './updateCategory.dto';
@@ -8,13 +12,23 @@ export class CategoryService {
   constructor(private prisma: PrismaService) {}
 
   async createCategory(data: CreateCategoryDto) {
-    await this.prisma.category.create({
-      data,
-    });
+    try {
+      await this.prisma.category.create({
+        data,
+      });
 
-    return {
-      messsage: 'Category successfully created',
-    };
+      return {
+        messsage: 'Category successfully created',
+      };
+    } catch (error) {
+      if (error.code === 'P2002') {
+        throw new ConflictException(`Category with this name already exists`);
+      } else {
+        throw new Error(
+          'An unexpected error occurred while creating the category',
+        );
+      }
+    }
   }
 
   async findAllCategories() {
