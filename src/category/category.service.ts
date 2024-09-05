@@ -24,18 +24,18 @@ export class CategoryService {
   async updateCategory(id: number, data: UpdateCategoryDto) {
     try {
       const updatedCategory = await this.prisma.category.update({
-        where: { id: id },
+        where: { id },
         data,
       });
 
-      return {
-        id: updatedCategory.id,
-        name: updatedCategory.name,
-        description: updatedCategory.description,
-      };
+      return updatedCategory;
     } catch (error) {
       if (error.code === 'P2025') {
         throw new NotFoundException(`Category with id ${id} not found`);
+      } else {
+        throw new Error(
+          'An unexpected error occurred while updating the category',
+        );
       }
     }
   }
