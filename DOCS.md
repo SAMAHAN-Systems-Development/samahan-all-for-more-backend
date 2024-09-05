@@ -459,8 +459,16 @@ Error Response:
 
 ```
 {
-   "message": "Bulletin with id 3 not found",
-   "error": "Not Found",
-   "statusCode": 404
+   "statusCode": 404,
+   "message": "Bulletin with id 100 does not exist",
+}
+```
+
+**400 Bad Request**
+
+```
+{
+   "statusCode": 400,
+   "message": "Bulletin with id 3 has already been deleted",
 }
 ```

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupabaseService } from '../../supabase/supabase.service';
 import { BulletinDTO } from './bulletin.dto';
@@ -64,7 +64,6 @@ export class BulletinService {
     });
   }
 
-<<<<<<< HEAD
   async updateBulletin(
     id: number,
     updateBulletinDto: BulletinDTO,
@@ -157,6 +156,23 @@ export class BulletinService {
   async deleteBulletin(id: number) {
     try {
       const dateNow = new Date();
+      const bulletin = await this.prismaService.bulletin.findUnique({
+        where: { id },
+      });
+
+      if (!bulletin) {
+        throw new HttpException(
+          `Bulletin with id ${id} does not exist`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      if (bulletin.deleted_at) {
+        throw new HttpException(
+          `Bulletin with id ${id} has already been deleted`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
 
       await this.prismaService.bulletin.update({
         where: { id },
@@ -176,8 +192,13 @@ export class BulletinService {
         message: 'Bulletin successfully deleted',
       };
     } catch (error) {
-      throw new Error(
-        `Failed to delete bulleting with id ${id}: ${error.message}`,
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new HttpException(
+        `Failed to delete bulletin with id ${id}: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }

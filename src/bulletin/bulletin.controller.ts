@@ -169,6 +169,6 @@ export class BulletinController {
   @Delete(':id')
   @UseGuards(AuthGuard)
   async deleteBulletin(@Param('id', ParseIntPipe) id: number) {
-    return this.bulletinService.deleteBulletin(+id);
+    return this.bulletinService.deleteBulletin(id);
   }
 }
