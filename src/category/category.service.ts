@@ -36,6 +36,10 @@ export class CategoryService {
     } catch (error) {
       if (error.code === 'P2025') {
         throw new NotFoundException(`Category with id ${id} not found`);
+      } else {
+        throw new Error(
+          'An unexpected error occurred while updating the category',
+        );
       }
     }
   }
