@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupabaseService } from '../../supabase/supabase.service';
 import { BulletinDTO } from './createBulletin.dto';
-import { DateFNSService } from 'utils/datefns/datefns.service';
+import { DateFNSService } from '../../utils/datefns/datefns.service';
 
 @Injectable()
 export class BulletinService {
@@ -20,10 +20,7 @@ export class BulletinService {
       try {
         const bulletin = await tx.bulletin.create({
           data: {
-            category_id: addBulletinDto.category_id,
-            title: addBulletinDto.title,
-            content: addBulletinDto.content,
-            author: addBulletinDto.author,
+            ...addBulletinDto,
           },
         });
         if (!pdfAttachments) {
@@ -72,14 +69,11 @@ export class BulletinService {
         const updatedBulletin = await tx.bulletin.update({
           where: { id },
           data: {
-            category_id: updateBulletinDto.category_id,
-            title: updateBulletinDto.title,
-            content: updateBulletinDto.content,
-            author: updateBulletinDto.author,
+            ...updateBulletinDto,
           },
         });
 
-        if (pdfAttachments && pdfAttachments.length > 0) {
+        if (pdfAttachments?.length) {
           // This remove old records
           const oldAttachments = await tx.pDFAttachment.findMany({
             where: { bulletin_id: id, deleted_at: null },
