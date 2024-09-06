@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { SupabaseService } from '../../supabase/supabase.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { JwtService } from '@nestjs/jwt';
-import { DateFNSService } from '../../utils/datefns/datefns.service';
+import { DateFNSService } from '../utils/datefns/datefns.service';
 
 describe('BulletinController', () => {
   let controller: BulletinController;

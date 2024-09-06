@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupabaseService } from '../../supabase/supabase.service';
 import { BulletinDTO } from './createBulletin.dto';
-import { DateFNSService } from '../../utils/datefns/datefns.service';
+import { DateFNSService } from '../utils/datefns/datefns.service';
 
 @Injectable()
 export class BulletinService {
