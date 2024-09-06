@@ -260,34 +260,32 @@ Request:
 
 ```
 method: PUT
-cathegory_id: int, optional
-title: string, optional
-content: string, optional
-author: string, optional
+cathegory_id: int, required
+title: string, required
+content: string, required
+author: string, required
 pdf_attachemnt: pdf[], optional
 ```
 
 Sample Request:
 
-**201 Created**
+**200 OK**
 
-Happens when either pdf is provided or not.
-
-Request:
-```
-@params: 1
-
-<!-- This is formdata -->
-[Object: null] {
-   category_id: 1,
-   author: "Analyn"
-}
-```
-Response:
 ```
 {
-  "statusCode": 200,
-  "message": "Bulletin updated"
+   category_id: 1,
+   title: "new title",
+   content: "new content here",
+   author: "John",
+   pdf_attachment: [actual_attachment]
+}
+```
+
+Response
+```
+{
+  "statusCode": 201,
+  "message": "Bulletin created successfully"
 }
 ```
 

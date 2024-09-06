@@ -22,7 +22,7 @@ function IsCategoryIdExists(validationOptions?: ValidationOptions) {
   };
 }
 
-export class AddBulletinDTO {
+export class BulletinDTO {
   @Type(() => Number)
   @IsInt({ message: 'Category ID must be an integer' })
   @IsCategoryIdExists({ message: 'Category doesnt exists' })
@@ -41,5 +41,3 @@ export class AddBulletinDTO {
   @IsNotEmpty({ message: 'Author is required' })
   author: string;
 }
-
-export class UpdateBulletinDTO extends PartialType(AddBulletinDTO) {}

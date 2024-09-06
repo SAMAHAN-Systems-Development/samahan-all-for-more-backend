@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupabaseService } from '../../supabase/supabase.service';
-import { AddBulletinDTO, UpdateBulletinDTO } from './createBulletin.dto';
+import { BulletinDTO } from './createBulletin.dto';
 
 @Injectable()
 export class BulletinService {
@@ -11,7 +11,7 @@ export class BulletinService {
   ) {}
 
   async createBulletin(
-    addBulletinDto: AddBulletinDTO,
+    addBulletinDto: BulletinDTO,
     pdfAttachments: Express.Multer.File[],
   ) {
     return this.prismaService.$transaction(async (tx) => {
@@ -72,7 +72,7 @@ export class BulletinService {
 
   async updateBulletin(
     id: number,
-    updateBulletinDto: UpdateBulletinDTO,
+    updateBulletinDto: BulletinDTO,
     pdfAttachments: Express.Multer.File[],
   ) {
     return this.prismaService.$transaction(async (tx) => {

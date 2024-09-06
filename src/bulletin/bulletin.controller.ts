@@ -18,7 +18,7 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { BulletinService } from './bulletin.service';
 import { AuthGuard } from '../auth/auth.guard';
-import { AddBulletinDTO, UpdateBulletinDTO } from './createBulletin.dto';
+import { BulletinDTO } from './createBulletin.dto';
 import { ValidateNotSoftDeletePipe } from './bulleting.custom.pipe';
 
 @Controller('/api/bulletins')
@@ -50,7 +50,7 @@ export class BulletinController {
   async addBulletin(
     @UploadedFiles() pdfAttachments: Express.Multer.File[],
     @Body()
-    addBulletinDto: AddBulletinDTO,
+    addBulletinDto: BulletinDTO,
   ) {
     try {
       await this.bulletinService.createBulletin(addBulletinDto, pdfAttachments);
@@ -101,7 +101,7 @@ export class BulletinController {
     @Param('id', ParseIntPipe, ValidateNotSoftDeletePipe) id: number,
     @UploadedFiles() pdfAttachments: Express.Multer.File[],
     @Body()
-    updateBulletin: UpdateBulletinDTO,
+    updateBulletin: BulletinDTO,
   ) {
     try {
       await this.bulletinService.updateBulletin(
