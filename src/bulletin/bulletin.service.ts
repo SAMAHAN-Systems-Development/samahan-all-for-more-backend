@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupabaseService } from '../../supabase/supabase.service';
 import { BulletinDTO } from './bulletin.dto';
@@ -154,52 +154,28 @@ export class BulletinService {
   }
 
   async deleteBulletin(id: number) {
-    try {
-      const dateNow = new Date();
-      const bulletin = await this.prismaService.bulletin.findUnique({
-        where: { id },
-      });
+    return this.prismaService.$transaction(async (tx) => {
+      try {
+        const dateNow = new Date();
 
-      if (!bulletin) {
-        throw new HttpException(
-          `Bulletin with id ${id} does not exist`,
-          HttpStatus.NOT_FOUND,
-        );
-      }
+        await tx.bulletin.update({
+          where: { id },
+          data: {
+            deleted_at: dateNow,
+          },
+        });
 
-      if (bulletin.deleted_at) {
-        throw new HttpException(
-          `Bulletin with id ${id} has already been deleted`,
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+        await tx.pDFAttachment.updateMany({
+          where: { bulletin_id: id },
+          data: { deleted_at: dateNow },
+        });
 
-      await this.prismaService.bulletin.update({
-        where: { id },
-        data: {
-          deleted_at: dateNow,
-        },
-      });
-
-      await this.prismaService.pDFAttachment.updateMany({
-        where: { bulletin_id: id },
-        data: {
-          deleted_at: dateNow,
-        },
-      });
-
-      return {
-        message: 'Bulletin successfully deleted',
-      };
-    } catch (error) {
-      if (error instanceof HttpException) {
+        return {
+          message: 'Bulletin successfully deleted',
+        };
+      } catch (error) {
         throw error;
       }
-
-      throw new HttpException(
-        `Failed to delete bulletin with id ${id}: ${error.message}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    });
   }
 }

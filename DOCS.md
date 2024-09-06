@@ -200,12 +200,12 @@ author: string, required
 pdf_attachemnts: application/pdf[], optional
 ```
 
-
 **201 Created**
 
 Happens when either pdf is provided or not.
 
 Request
+
 ```
 {
    category_id: 1,
@@ -215,7 +215,9 @@ Request
    pdf_attachments: application/pdf[]
 }
 ```
+
 Response
+
 ```
 {
   "statusCode": 201,
@@ -230,6 +232,7 @@ Error Response:
 Specific message appears on which field is mising
 
 Request
+
 ```
 <!-- This is formdata -->
 
@@ -241,7 +244,9 @@ Request
    pdf_attachments: [actual_attachments]
 }
 ```
+
 Response
+
 ```JSON
 {
   "message": [
@@ -254,6 +259,7 @@ Response
   "statusCode": 400
 }
 ```
+
 ## PUT /api/bulletins/:id
 
 Request:
@@ -269,29 +275,11 @@ pdf_attachemnts: [application/pdf], optional
 ```
 
 **200 OK**
-## GET /api/bulletins
-
-This endpoint retrieves a list of all bulletins.
-
-```
-Method: GET
-Path: /api/bulletins
-Query Parameters:
-- Page: The current page number. Default is 1
-- Limit: The maximum number of items to return per page. Default is 10
-```
-
-Example Requests
-
-```
-GET /api/bulletins
-GET /api/bulletins?page=2
-GET /api/bulletins?page=2&limit=15
-```
 
 Request Payload:
 
 HTTP: `/api/bulletins/1`
+
 ```JSON
 {
    "params": {
@@ -311,6 +299,7 @@ HTTP: `/api/bulletins/1`
 ```
 
 Response
+
 ```JSON
 {
   "statusCode": 200,
@@ -343,6 +332,7 @@ Response
 Specific message appears on which field is mising
 
 Response:
+
 ```JSON
 {
   "message": [
@@ -355,9 +345,11 @@ Response:
   "statusCode": 400
 }
 ```
+
 Params are not numbers !
 
 Response
+
 ```JSON
 {
     "message": "Validation failed (numeric string is expected)",
@@ -365,9 +357,11 @@ Response
     "statusCode": 400
 }
 ```
+
 **404 Not Found**
 
 Params are either not in database or isDeleted
+
 ```JSON
 {
     "message": "Bulletin with ID 100 does not exists or has been deleted",
@@ -381,6 +375,7 @@ Params are either not in database or isDeleted
 Its Either the pdf attachemnt is deleted or doesnt exists
 
 Request body:
+
 ```JSON
 {
    "category_id": 1,
@@ -392,47 +387,13 @@ Request body:
 ```
 
 Response:
+
 ```JSON
 {
   "message": "Attachments with IDs 1, 2 do not exists to bulletin ID: 1",
   "error": "Internal Server Error",
   "statusCode": 500
 }
-- **Status:** 200 OK
-
-Sample Success Response
-
-```json
-[
-  {
-    "id": 50,
-    "category_id": 14,
-    "title": "Stella aeneus amor.",
-    "content": "Culpa aperte subiungo.",
-    "author": "Rafael Kozey",
-    "created_at": "2024-09-01T12:26:00.485Z",
-    "updated_at": "2024-09-01T12:26:00.485Z",
-    "deleted_at": null,
-    "pdfAttachments": [
-      {
-        "id": 26,
-        "bulletin_id": 50,
-        "file_path": "/usr/share/mug_upbeat.avi",
-        "created_at": "2024-09-01T12:26:00.577Z",
-        "updated_at": "2024-09-01T12:26:00.577Z",
-        "deleted_at": null
-      }
-    ],
-    "category": {
-      "id": 14,
-      "name": "Tools",
-      "description": "Cubitum aveho.",
-      "created_at": "2024-09-01T12:26:00.423Z",
-      "updated_at": "2024-09-01T12:26:00.423Z",
-      "deleted_at": null
-    }
-  }
-]
 ```
 
 ## DELETE /api/bulletins/{id}
@@ -447,7 +408,7 @@ Sample Success Response:
 
 **200 OK**
 
-```
+```JSON
 {
   "message": "Bulletin successfully deleted"
 }
@@ -455,20 +416,28 @@ Sample Success Response:
 
 Error Response:
 
-**404 Not Found**
+**400 Bad Request (Bulletin already deleted)**
 
-```
+```JSON
 {
-   "statusCode": 404,
-   "message": "Bulletin with id 100 does not exist",
+    "message": [
+        "Bulletin with id 3 has already been deleted."
+    ],
+    "error": "Bad Request",
+    "statusCode": 400
 }
-```
-
-**400 Bad Request**
 
 ```
+
+**400 Bad Request (Bulletin does not exist)**
+
+```JSON
 {
-   "statusCode": 400,
-   "message": "Bulletin with id 3 has already been deleted",
+    "message": [
+        "Bulletin with id 9000 does not exist."
+    ],
+    "error": "Bad Request",
+    "statusCode": 400
 }
+
 ```

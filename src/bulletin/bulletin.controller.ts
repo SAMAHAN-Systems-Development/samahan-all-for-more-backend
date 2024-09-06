@@ -25,6 +25,7 @@ import { BulletinDTO } from './bulletin.dto';
 import { ValidateNotSoftDeletePipe } from './bulleting.custom.pipe';
 import { createMessagePart, isEmpty } from '../utils/utils';
 import { Bulletin } from '@prisma/client';
+import { DeleteBulletinDTO } from './deleteBulletin.dto';
 
 @Controller('/api/bulletins')
 @UseGuards(AuthGuard)
@@ -99,7 +100,6 @@ export class BulletinController {
     }
   }
 
-<<<<<<< HEAD
   @Put(':id')
   @UseGuards(AuthGuard)
   @UsePipes(
@@ -165,10 +165,10 @@ export class BulletinController {
     }
   }
 
-
   @Delete(':id')
   @UseGuards(AuthGuard)
-  async deleteBulletin(@Param('id', ParseIntPipe) id: number) {
-    return this.bulletinService.deleteBulletin(id);
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  async deleteBulletin(@Param() deleteBulletinDTO: DeleteBulletinDTO) {
+    return this.bulletinService.deleteBulletin(deleteBulletinDTO.id);
   }
 }
