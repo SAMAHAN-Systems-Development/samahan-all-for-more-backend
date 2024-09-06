@@ -284,8 +284,19 @@ Sample Request:
 Response
 ```
 {
-  "statusCode": 201,
-  "message": "Bulletin created successfully"
+  "statusCode": 200,
+  "message": "Bulletin updated successfully",
+  "data": {
+    "id": 2,
+    "category_id": 1,
+    "title": "new title",
+    "content": "new content here",
+    "author": "John",
+    "created_at": "2024-09-01T01:30:23.844Z",
+    "updated_at": "2024-09-06T07:23:26.471Z",
+    "deleted_at": null,
+    "attachments": []
+  }
 }
 ```
 

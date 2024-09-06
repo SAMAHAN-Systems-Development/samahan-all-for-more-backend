@@ -104,14 +104,19 @@ export class BulletinController {
     updateBulletin: BulletinDTO,
   ) {
     try {
-      await this.bulletinService.updateBulletin(
+      const { data, attachments } = await this.bulletinService.updateBulletin(
         id,
         updateBulletin,
         pdfAttachments,
       );
+      data['attachments'] = attachments;
       return {
         statusCode: HttpStatus.OK,
-        message: 'Bulletin Updated',
+        message:
+          attachments.length === 0
+            ? `Bulletin updated successfully`
+            : `Bulletin updated successfully with PDF attachments.`,
+        data: data,
       };
     } catch (error) {
       throw new InternalServerErrorException(

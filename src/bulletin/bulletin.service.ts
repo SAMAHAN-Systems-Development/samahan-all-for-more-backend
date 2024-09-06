@@ -72,7 +72,7 @@ export class BulletinService {
             ...updateBulletinDto,
           },
         });
-
+        const attachments = [];
         if (pdfAttachments?.length) {
           // This remove old records
           const oldAttachments = await tx.pDFAttachment.findMany({
@@ -125,15 +125,19 @@ export class BulletinService {
               );
             }
 
-            await tx.pDFAttachment.create({
+            const pdfUpdatedData = await tx.pDFAttachment.create({
               data: {
                 bulletin_id: updatedBulletin.id,
                 file_path: uniqueFilename,
               },
             });
+            attachments.push(pdfUpdatedData);
           }
         }
-        return updatedBulletin;
+        return {
+          data: updatedBulletin,
+          attachments: attachments.length ? attachments : [],
+        };
       } catch (error) {
         throw error;
       }
