@@ -7,9 +7,10 @@ import { BulletinService } from './bulletin.service';
 import { BulletinController } from './bulletin.controller';
 import { IsCategoryIdExistsConstraint } from './bulletin.custom.decorator';
 import { ValidateNotSoftDeletePipe } from './bulleting.custom.pipe';
+import { DateFNSModule } from 'utils/datefns/datefns.module';
 
 @Module({
-  imports: [PrismaModule, SupabaseModule],
+  imports: [PrismaModule, SupabaseModule, DateFNSModule],
   controllers: [BulletinController],
   providers: [
     BulletinService,

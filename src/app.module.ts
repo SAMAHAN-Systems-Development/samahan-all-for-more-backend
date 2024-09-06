@@ -7,6 +7,7 @@ import { SupabaseModule } from 'supabase/supabase.module';
 import { AuthModule } from './auth/auth.module';
 import { BulletinModule } from './bulletin/bulletin.module';
 import { CategoryModule } from './category/category.module';
+import { DateFNSModule } from 'utils/datefns/datefns.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CategoryModule } from './category/category.module';
     AuthModule,
     BulletinModule,
     CategoryModule,
+    DateFNSModule,
   ],
   controllers: [AppController],
   providers: [AppService],

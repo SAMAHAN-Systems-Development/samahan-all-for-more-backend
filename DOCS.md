@@ -197,7 +197,7 @@ category_id: int, required
 title: string, required
 content: string, required
 author: string, required
-pdf_attachemnt: pdf[], optional
+pdf_attachemnts: application/pdf[], optional
 ```
 
 
@@ -212,7 +212,7 @@ Request
    title: "something",
    content: "some content here",
    author: "John",
-   pdf_attachment: [actual_attachment]
+   pdf_attachments: application/pdf[]
 }
 ```
 Response
@@ -238,7 +238,7 @@ Request
    title: null,
    content: null,
    author: null,
-   pdf_attachment: [actual_attachment]
+   pdf_attachments: [actual_attachments]
 }
 ```
 Response
@@ -260,11 +260,11 @@ Request:
 
 ```
 method: PUT
-cathegory_id: int, required
+category_id: int, required
 title: string, required
 content: string, required
 author: string, required
-pdf_attachemnt: pdf[], optional
+pdf_attachemnts: [application/pdf], optional
 ```
 
 Sample Request:
@@ -277,7 +277,7 @@ Sample Request:
    title: "new title",
    content: "new content here",
    author: "John",
-   pdf_attachment: [actual_attachment]
+   pdf_attachments: [application/pdf]
 }
 ```
 

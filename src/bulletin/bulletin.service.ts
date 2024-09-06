@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupabaseService } from '../../supabase/supabase.service';
 import { BulletinDTO } from './createBulletin.dto';
+import { DateFNSService } from 'utils/datefns/datefns.service';
 
 @Injectable()
 export class BulletinService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly supabaseService: SupabaseService,
+    private readonly datefnsService: DateFNSService,
   ) {}
 
   async createBulletin(
@@ -28,24 +30,14 @@ export class BulletinService {
           return bulletin;
         }
         for (const pdfAttachment of pdfAttachments) {
-          const now = new Date();
-          const formattedDate = `${String(now.getDate()).padStart(
-            2,
-            '0',
-          )}-${String(now.getMonth() + 1).padStart(
-            2,
-            '0',
-          )}-${now.getFullYear()}`;
-          const sanitizedFileName = pdfAttachment.originalname
-            .replace(/\s+/g, '-')
-            .replace(/[^a-zA-Z0-9.-]/g, '');
-          const uniqueFileName = `${formattedDate}-${sanitizedFileName}`;
-          const filePath = uniqueFileName;
+          const uniqueFilename = this.datefnsService.generateUniqueFileName(
+            pdfAttachment.originalname,
+          );
 
           const { error } = await this.supabaseService
             .getSupabase()
             .storage.from(process.env.STORAGE_BUCKET)
-            .upload(uniqueFileName, pdfAttachment.buffer, {
+            .upload(uniqueFilename, pdfAttachment.buffer, {
               contentType: 'application/pdf',
               cacheControl: '3600',
               upsert: true,
@@ -58,7 +50,7 @@ export class BulletinService {
           await tx.pDFAttachment.create({
             data: {
               bulletin_id: bulletin.id,
-              file_path: filePath,
+              file_path: uniqueFilename,
             },
           });
         }
@@ -120,24 +112,14 @@ export class BulletinService {
 
           // This create new records
           for (const pdfAttachment of pdfAttachments) {
-            const now = new Date();
-            const formattedDate = `${String(now.getDate()).padStart(
-              2,
-              '0',
-            )}-${String(now.getMonth() + 1).padStart(
-              2,
-              '0',
-            )}-${now.getFullYear()}`;
-            const sanitizedFileName = pdfAttachment.originalname
-              .replace(/\s+/g, '-')
-              .replace(/[^a-zA-Z0-9.-]/g, '');
-            const uniqueFileName = `${formattedDate}-${sanitizedFileName}`;
-            const filePath = uniqueFileName;
+            const uniqueFilename = this.datefnsService.generateUniqueFileName(
+              pdfAttachment.originalname,
+            );
 
             const { error: uploadError } = await this.supabaseService
               .getSupabase()
               .storage.from(process.env.STORAGE_BUCKET)
-              .upload(uniqueFileName, pdfAttachment.buffer, {
+              .upload(uniqueFilename, pdfAttachment.buffer, {
                 contentType: 'application/pdf',
                 cacheControl: '3600',
                 upsert: true,
@@ -152,7 +134,7 @@ export class BulletinService {
             await tx.pDFAttachment.create({
               data: {
                 bulletin_id: updatedBulletin.id,
-                file_path: filePath,
+                file_path: uniqueFilename,
               },
             });
           }
