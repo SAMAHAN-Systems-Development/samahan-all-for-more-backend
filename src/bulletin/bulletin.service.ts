@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupabaseService } from '../../supabase/supabase.service';
-import { BulletinDTO } from './createBulletin.dto';
-import { DateFNSService } from '../utils/datefns/datefns.service';
+import { BulletinDTO } from './bulletin.dto';
+import { DateFNSService } from '../utils/datefns.service';
+import { UtilityService } from '../utils/utils.service';
 
 @Injectable()
 export class BulletinService {
@@ -10,6 +11,7 @@ export class BulletinService {
     private readonly prismaService: PrismaService,
     private readonly supabaseService: SupabaseService,
     private readonly datefnsService: DateFNSService,
+    private readonly utilService: UtilityService,
   ) {}
 
   async createBulletin(
@@ -73,7 +75,7 @@ export class BulletinService {
           },
         });
         const attachments = [];
-        if (pdfAttachments?.length) {
+        if (!this.utilService.isEmpty(pdfAttachments)) {
           // This remove old records
           const oldAttachments = await tx.pDFAttachment.findMany({
             where: { bulletin_id: id, deleted_at: null },
@@ -87,7 +89,7 @@ export class BulletinService {
               },
             });
 
-            if (references.length === 0) {
+            if (!this.utilService.isEmpty(references)) {
               const { error } = await this.supabaseService
                 .getSupabase()
                 .storage.from(process.env.STORAGE_BUCKET)
@@ -136,7 +138,7 @@ export class BulletinService {
         }
         return {
           data: updatedBulletin,
-          attachments: attachments.length ? attachments : [],
+          attachments: attachments,
         };
       } catch (error) {
         throw error;

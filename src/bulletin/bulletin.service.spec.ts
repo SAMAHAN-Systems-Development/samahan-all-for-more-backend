@@ -2,7 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BulletinService } from './bulletin.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupabaseService } from '../../supabase/supabase.service';
-import { DateFNSService } from '../utils/datefns/datefns.service';
+import { DateFNSService } from '../utils/datefns.service';
+import { UtilityService } from '../utils/utils.service';
 
 describe('BulletinService', () => {
   let service: BulletinService;
@@ -14,6 +15,7 @@ describe('BulletinService', () => {
         PrismaService,
         SupabaseService,
         DateFNSService,
+        UtilityService,
       ],
     }).compile();
 

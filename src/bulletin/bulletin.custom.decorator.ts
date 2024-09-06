@@ -13,9 +13,13 @@ export class IsCategoryIdExistsConstraint
   constructor(private readonly prisma: PrismaService) {}
 
   async validate(category_id: number): Promise<boolean> {
+    if (category_id === undefined) {
+      return false;
+    }
     const category = await this.prisma.category.findUnique({
       where: { id: category_id },
     });
+
     return !!category;
   }
 

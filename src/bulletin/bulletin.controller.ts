@@ -18,12 +18,16 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { BulletinService } from './bulletin.service';
 import { AuthGuard } from '../auth/auth.guard';
-import { BulletinDTO } from './createBulletin.dto';
+import { BulletinDTO } from './bulletin.dto';
 import { ValidateNotSoftDeletePipe } from './bulleting.custom.pipe';
+import { UtilityService } from '../utils/utils.service';
 
 @Controller('/api/bulletins')
 export class BulletinController {
-  constructor(private readonly bulletinService: BulletinService) {}
+  constructor(
+    private readonly bulletinService: BulletinService,
+    private readonly utilService: UtilityService,
+  ) {}
 
   @Post()
   @UseGuards(AuthGuard)
@@ -57,9 +61,9 @@ export class BulletinController {
 
       return {
         statusCode: HttpStatus.CREATED,
-        message: pdfAttachments
-          ? `Bulletin created successfully, and succesfully uploaded ${pdfAttachments.length}`
-          : 'Bulletin created successfully',
+        message: this.utilService.isEmpty(pdfAttachments)
+          ? 'Bulletin created successfully'
+          : `Bulletin created successfully, and succesfully uploaded ${pdfAttachments.length}`,
       };
     } catch (error) {
       if (error instanceof BadRequestException) {
@@ -112,10 +116,9 @@ export class BulletinController {
       data['attachments'] = attachments;
       return {
         statusCode: HttpStatus.OK,
-        message:
-          attachments.length === 0
-            ? `Bulletin updated successfully`
-            : `Bulletin updated successfully with PDF attachments.`,
+        message: this.utilService.isEmpty(attachments)
+          ? `Bulletin updated successfully`
+          : `Bulletin updated successfully with PDF attachments.`,
         data: data,
       };
     } catch (error) {

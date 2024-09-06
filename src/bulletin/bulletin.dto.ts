@@ -23,9 +23,9 @@ function IsCategoryIdExists(validationOptions?: ValidationOptions) {
 
 export class BulletinDTO {
   @Type(() => Number)
+  @IsNotEmpty({ message: 'Category is required' })
   @IsInt({ message: 'Category ID must be an integer' })
   @IsCategoryIdExists({ message: 'Category doesnt exists' })
-  @IsNotEmpty({ message: 'Category is required' })
   category_id: number;
 
   @IsString({ message: 'Title must be a string' })
