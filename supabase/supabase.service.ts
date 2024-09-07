@@ -2,6 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { generateUniqueFileName } from '../src/utils/datefns';
 @Injectable()
 export class SupabaseService {
   private supabase: SupabaseClient;
@@ -28,7 +29,23 @@ export class SupabaseService {
 
     return data;
   }
+  async uploadPdftoDb(pdfAttachment: Express.Multer.File) {
+    const uniqueFilename = generateUniqueFileName(pdfAttachment.originalname);
 
+    const { error } = await this.supabase.storage
+      .from(process.env.STORAGE_BUCKET)
+      .upload(uniqueFilename, pdfAttachment.buffer, {
+        contentType: 'application/pdf',
+        cacheControl: '3600',
+        upsert: true,
+      });
+
+    if (error) {
+      throw new Error(`Failed to upload file: ${error.message}`);
+    }
+
+    return uniqueFilename;
+  }
   // FiletoBase64(file: Express.Multer.File) {
   //   let fileToBase64;
   //   try {

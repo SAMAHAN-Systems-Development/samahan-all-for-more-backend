@@ -264,28 +264,38 @@ category_id: int, required
 title: string, required
 content: string, required
 author: string, required
+deleted_attachment_ids: number[], optional
 pdf_attachemnts: [application/pdf], optional
 ```
 
-Sample Request:
-
 **200 OK**
 
-```
+Request Payload: 
+
+HTTP: `/api/bulletins/1` 
+```JSON
 {
-   category_id: 1,
-   title: "new title",
-   content: "new content here",
-   author: "John",
-   pdf_attachments: [application/pdf]
+   "params": {
+      "id": 1
+   },
+   "body": {
+      "category_id": 1,
+      "title": "new title",
+      "content": "new content here",
+      "author": "John",
+      "deleted_attachemnts_ids": [56, 74, 75]
+   },
+   "attachments": {
+      "pdf_attachments": [application/pdf]
+   }
 }
 ```
 
 Response
-```
+```JSON
 {
   "statusCode": 200,
-  "message": "Bulletin updated successfully",
+  "message": "Bulletin updated successfully deleted 3 and added 1",
   "data": {
     "id": 2,
     "category_id": 1,
@@ -295,7 +305,16 @@ Response
     "created_at": "2024-09-01T01:30:23.844Z",
     "updated_at": "2024-09-06T07:23:26.471Z",
     "deleted_at": null,
-    "attachments": []
+    "new_attachments": [
+      {
+        "id": 76,
+        "bulletin_id": 1,
+        "file_path": "07-09-2024-09-39-34-testfile.pdf",
+        "created_at": "2024-09-07T01:39:34.853Z",
+        "updated_at": "2024-09-07T01:39:34.853Z",
+        "deleted_at": null
+      }
+    ]
   }
 }
 ```
@@ -304,7 +323,8 @@ Response
 
 Specific message appears on which field is mising
 
-```
+Response:
+```JSON
 {
   "message": [
     "Category doesnt exists",
@@ -317,7 +337,9 @@ Specific message appears on which field is mising
 }
 ```
 Params are not numbers !
-```
+
+Response
+```JSON
 {
     "message": "Validation failed (numeric string is expected)",
     "error": "Bad Request",
@@ -327,10 +349,34 @@ Params are not numbers !
 **404 Not Found**
 
 Params are either not in database or isDeleted 
-```
+```JSON
 {
     "message": "Bulletin with ID 100 does not exists or has been deleted",
     "error": "Not Found",
     "statusCode": 404
+}
+```
+
+**500 Internal Server Error**
+
+Its Either the pdf attachemnt is deleted or doesnt exists
+
+Request body:
+```JSON
+{
+   "category_id": 1,
+   "title": "new title",
+   "content": "new content here",
+   "author": "John",
+   "deleted_attachemnts_ids": [1, 2]
+}
+```
+
+Response:
+```JSON
+{
+  "message": "Attachments with IDs 1, 2 do not exists to bulletin ID: 1",
+  "error": "Internal Server Error",
+  "statusCode": 500
 }
 ```

@@ -5,12 +5,10 @@ import { SupabaseModule } from 'supabase/supabase.module';
 
 import { BulletinService } from './bulletin.service';
 import { BulletinController } from './bulletin.controller';
-import { IsCategoryIdExistsConstraint } from './bulletin.custom.decorator';
 import { ValidateNotSoftDeletePipe } from './bulleting.custom.pipe';
-import { UtilModule } from '../utils/utils.module';
-
+import { IsCategoryIdExistsConstraint } from './bulletin.custom.decorator';
 @Module({
-  imports: [PrismaModule, SupabaseModule, UtilModule],
+  imports: [PrismaModule, SupabaseModule],
   controllers: [BulletinController],
   providers: [
     BulletinService,

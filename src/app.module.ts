@@ -7,7 +7,6 @@ import { SupabaseModule } from 'supabase/supabase.module';
 import { AuthModule } from './auth/auth.module';
 import { BulletinModule } from './bulletin/bulletin.module';
 import { CategoryModule } from './category/category.module';
-import { UtilModule } from './utils/utils.module';
 
 @Module({
   imports: [
@@ -17,7 +16,6 @@ import { UtilModule } from './utils/utils.module';
     AuthModule,
     BulletinModule,
     CategoryModule,
-    UtilModule,
   ],
   controllers: [AppController],
   providers: [AppService],

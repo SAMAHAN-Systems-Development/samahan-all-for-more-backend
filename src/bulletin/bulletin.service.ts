@@ -2,16 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupabaseService } from '../../supabase/supabase.service';
 import { BulletinDTO } from './bulletin.dto';
-import { DateFNSService } from '../utils/datefns.service';
-import { UtilityService } from '../utils/utils.service';
+import { isEmpty } from '../utils/utils';
 
 @Injectable()
 export class BulletinService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly supabaseService: SupabaseService,
-    private readonly datefnsService: DateFNSService,
-    private readonly utilService: UtilityService,
   ) {}
 
   async createBulletin(
@@ -29,22 +26,9 @@ export class BulletinService {
           return bulletin;
         }
         for (const pdfAttachment of pdfAttachments) {
-          const uniqueFilename = this.datefnsService.generateUniqueFileName(
-            pdfAttachment.originalname,
+          const uniqueFilename = await this.supabaseService.uploadPdftoDb(
+            pdfAttachment,
           );
-
-          const { error } = await this.supabaseService
-            .getSupabase()
-            .storage.from(process.env.STORAGE_BUCKET)
-            .upload(uniqueFilename, pdfAttachment.buffer, {
-              contentType: 'application/pdf',
-              cacheControl: '3600',
-              upsert: true,
-            });
-
-          if (error) {
-            throw new Error(`Failed to upload file: ${error.message}`);
-          }
 
           await tx.pDFAttachment.create({
             data: {
@@ -68,64 +52,54 @@ export class BulletinService {
   ) {
     return this.prismaService.$transaction(async (tx) => {
       try {
+        const { deleted_attachment_ids, ...bulletinData } = updateBulletinDto;
         const updatedBulletin = await tx.bulletin.update({
           where: { id },
           data: {
-            ...updateBulletinDto,
+            ...bulletinData,
           },
         });
         const attachments = [];
-        if (!this.utilService.isEmpty(pdfAttachments)) {
-          // This remove old records
-          const oldAttachments = await tx.pDFAttachment.findMany({
-            where: { bulletin_id: id, deleted_at: null },
+        // Check if is there any deleted attachment ids to delete
+        // Reducing the query time by doing promise.all to simultaneously update the given ids
+        if (!isEmpty(deleted_attachment_ids)) {
+          const existingAttachments = await tx.pDFAttachment.findMany({
+            where: {
+              id: { in: deleted_attachment_ids },
+              deleted_at: null,
+              bulletin_id: id,
+            },
           });
-
-          for (const attachment of oldAttachments) {
-            const references = await tx.bulletin.findMany({
-              where: {
-                pdfAttachments: { some: { id: attachment.id } },
-                deleted_at: null,
-              },
-            });
-
-            if (!this.utilService.isEmpty(references)) {
-              const { error } = await this.supabaseService
-                .getSupabase()
-                .storage.from(process.env.STORAGE_BUCKET)
-                .remove([attachment.file_path]);
-
-              if (error) {
-                throw new Error(`Failed to remove old file: ${error.message}`);
-              }
-            }
+          const existingAttachmentIdsSet = new Set(
+            existingAttachments.map((att) => att.id),
+          );
+          const nonExistingIds = deleted_attachment_ids.filter(
+            (id) => !existingAttachmentIdsSet.has(id),
+          );
+          if (!isEmpty(nonExistingIds)) {
+            throw new Error(
+              `Attachments with IDs ${nonExistingIds.join(
+                ', ',
+              )} do not exists to bulletin ID: ${id}`,
+            );
           }
 
-          await tx.pDFAttachment.updateMany({
-            where: { bulletin_id: id },
-            data: { deleted_at: new Date() },
-          });
-
-          // This create new records
+          await Promise.all(
+            deleted_attachment_ids.map((deleteID) =>
+              tx.pDFAttachment.update({
+                where: { id: deleteID },
+                data: { deleted_at: new Date() },
+              }),
+            ),
+          );
+        }
+        // Check if there is new pdf attachments
+        // Upload all and create new data for pdfAttacment table
+        if (!isEmpty(pdfAttachments)) {
           for (const pdfAttachment of pdfAttachments) {
-            const uniqueFilename = this.datefnsService.generateUniqueFileName(
-              pdfAttachment.originalname,
+            const uniqueFilename = await this.supabaseService.uploadPdftoDb(
+              pdfAttachment,
             );
-
-            const { error: uploadError } = await this.supabaseService
-              .getSupabase()
-              .storage.from(process.env.STORAGE_BUCKET)
-              .upload(uniqueFilename, pdfAttachment.buffer, {
-                contentType: 'application/pdf',
-                cacheControl: '3600',
-                upsert: true,
-              });
-
-            if (uploadError) {
-              throw new Error(
-                `Failed to upload new file: ${uploadError.message}`,
-              );
-            }
 
             const pdfUpdatedData = await tx.pDFAttachment.create({
               data: {

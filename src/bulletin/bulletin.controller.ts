@@ -20,14 +20,11 @@ import { BulletinService } from './bulletin.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { BulletinDTO } from './bulletin.dto';
 import { ValidateNotSoftDeletePipe } from './bulleting.custom.pipe';
-import { UtilityService } from '../utils/utils.service';
+import { createMessagePart, isEmpty } from '../utils/utils';
 
 @Controller('/api/bulletins')
 export class BulletinController {
-  constructor(
-    private readonly bulletinService: BulletinService,
-    private readonly utilService: UtilityService,
-  ) {}
+  constructor(private readonly bulletinService: BulletinService) {}
 
   @Post()
   @UseGuards(AuthGuard)
@@ -58,10 +55,21 @@ export class BulletinController {
   ) {
     try {
       await this.bulletinService.createBulletin(addBulletinDto, pdfAttachments);
+      const message = [
+        'Bulletin created successfully',
+        createMessagePart(
+          pdfAttachments.length,
+          'Added',
+          'PDF attachment',
+          'PDF attachments',
+        ),
+      ]
+        .filter(Boolean)
+        .join(' ');
 
       return {
         statusCode: HttpStatus.CREATED,
-        message: this.utilService.isEmpty(pdfAttachments)
+        message: isEmpty(pdfAttachments)
           ? 'Bulletin created successfully'
           : `Bulletin created successfully, and succesfully uploaded ${pdfAttachments.length}`,
       };
@@ -114,11 +122,27 @@ export class BulletinController {
         pdfAttachments,
       );
       data['attachments'] = attachments;
+      const message = [
+        'Bulletin updated successfully',
+        createMessagePart(
+          attachments.length,
+          'Added',
+          'PDF attachment',
+          'PDF attachments',
+        ),
+        createMessagePart(
+          updateBulletin.deleted_attachment_ids?.length || 0,
+          'Deleted',
+          'attachment',
+          'attachments',
+        ),
+      ]
+        .filter(Boolean)
+        .join(' ');
+
       return {
         statusCode: HttpStatus.OK,
-        message: this.utilService.isEmpty(attachments)
-          ? `Bulletin updated successfully`
-          : `Bulletin updated successfully with PDF attachments.`,
+        message: message,
         data: data,
       };
     } catch (error) {
