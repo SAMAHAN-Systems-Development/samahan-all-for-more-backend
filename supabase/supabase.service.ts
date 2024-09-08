@@ -39,12 +39,14 @@ export class SupabaseService {
         cacheControl: '3600',
         upsert: true,
       });
-
+    const getUrl = await this.supabase.storage
+      .from(process.env.STORAGE_BUCKET)
+      .getPublicUrl(uniqueFilename);
     if (error) {
       throw new Error(`Failed to upload file: ${error.message}`);
     }
 
-    return uniqueFilename;
+    return getUrl.data.publicUrl;
   }
   // FiletoBase64(file: Express.Multer.File) {
   //   let fileToBase64;
