@@ -17,7 +17,7 @@
 - [PostgreSQL](https://www.postgresql.org/) - Database Management System
 - [Docker](https://www.docker.com/) - Containerization Tool
 - [Git](https://git-scm.com/)/[Github](https://github.com/) - Version Control
-
+`
 ### Setting up your application
 
 1. Clone the Repository:

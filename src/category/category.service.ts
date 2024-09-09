@@ -17,6 +17,10 @@ export class CategoryService {
     };
   }
 
+  async findAllCategories() {
+    return this.prisma.category.findMany();
+  }
+
   async updateCategory(id: number, data: UpdateCategoryDto) {
     try {
       const updatedCategory = await this.prisma.category.update({
@@ -33,6 +37,30 @@ export class CategoryService {
       if (error.code === 'P2025') {
         throw new NotFoundException(`Category with id ${id} not found`);
       }
+    }
+  }
+
+  async deleteCategory(id: number) {
+    try {
+      const bulletins = await this.prisma.bulletin.findMany({
+        where: { category_id: id },
+      });
+
+      if (bulletins.length > 0) {
+        return {
+          message: 'Category in use, cannot delete',
+        };
+      }
+
+      await this.prisma.category.delete({
+        where: { id: id },
+      });
+
+      return {
+        message: 'Category successfully deleted',
+      };
+    } catch (error) {
+      throw new Error(`Failed to delete category id ${id}: ${error.message}`);
     }
   }
 }

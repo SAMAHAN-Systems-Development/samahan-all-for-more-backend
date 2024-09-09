@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
   InternalServerErrorException,
@@ -9,6 +10,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -21,13 +23,22 @@ import { AuthGuard } from '../auth/auth.guard';
 import { BulletinDTO } from './bulletin.dto';
 import { ValidateNotSoftDeletePipe } from './bulleting.custom.pipe';
 import { createMessagePart, isEmpty } from '../utils/utils';
+import { Bulletin } from '@prisma/client';
 
 @Controller('/api/bulletins')
+@UseGuards(AuthGuard)
 export class BulletinController {
   constructor(private readonly bulletinService: BulletinService) {}
 
+  @Get()
+  async getAllBulletins(
+    @Query() query: { page: number; limit?: number },
+  ): Promise<Bulletin[]> {
+    const { page = 1, limit = 10 } = query;
+    return this.bulletinService.getAllBulletins(Number(page), Number(limit));
+  }
+
   @Post()
-  @UseGuards(AuthGuard)
   @UsePipes(
     new ValidationPipe({
       whitelist: true,

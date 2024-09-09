@@ -11,6 +11,28 @@ export class BulletinService {
     private readonly supabaseService: SupabaseService,
   ) {}
 
+  async getAllBulletins(page: number, limit: number) {
+    const skip = (page - 1) * limit;
+    return this.prismaService.bulletin.findMany({
+      skip,
+      take: limit,
+      where: {
+        deleted_at: null,
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+      include: {
+        pdfAttachments: {
+          where: {
+            deleted_at: null,
+          },
+        },
+        category: true,
+      },
+    });
+  }
+
   async createBulletin(
     addBulletinDto: BulletinDTO,
     pdfAttachments: Express.Multer.File[],

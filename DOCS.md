@@ -270,9 +270,9 @@ pdf_attachemnts: [application/pdf], optional
 
 **200 OK**
 
-Request Payload: 
+Request Payload:
 
-HTTP: `/api/bulletins/1` 
+HTTP: `/api/bulletins/1`
 ```JSON
 {
    "params": {
@@ -348,7 +348,7 @@ Response
 ```
 **404 Not Found**
 
-Params are either not in database or isDeleted 
+Params are either not in database or isDeleted
 ```JSON
 {
     "message": "Bulletin with ID 100 does not exists or has been deleted",
