@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupabaseService } from '../../supabase/supabase.service';
-import { AddBulletinDTO } from './createBulletin.dto';
+import { BulletinDTO } from './bulletin.dto';
+import { isEmpty } from '../utils/utils';
 
 @Injectable()
 export class BulletinService {
@@ -33,62 +34,122 @@ export class BulletinService {
   }
 
   async createBulletin(
-    addBulletinDto: AddBulletinDTO,
+    addBulletinDto: BulletinDTO,
     pdfAttachments: Express.Multer.File[],
   ) {
     return this.prismaService.$transaction(async (tx) => {
       try {
         const bulletin = await tx.bulletin.create({
           data: {
-            category_id: addBulletinDto.category_id,
-            title: addBulletinDto.title,
-            content: addBulletinDto.content,
-            author: addBulletinDto.author,
+            ...addBulletinDto,
           },
         });
         if (!pdfAttachments) {
           return bulletin;
         }
-        for (const pdfAttachment of pdfAttachments) {
-          const now = new Date();
-          const formattedDate = `${String(now.getDate()).padStart(
-            2,
-            '0',
-          )}-${String(now.getMonth() + 1).padStart(
-            2,
-            '0',
-          )}-${now.getFullYear()}`;
-          const sanitizedFileName = pdfAttachment.originalname
-            .replace(/\s+/g, '-')
-            .replace(/[^a-zA-Z0-9.-]/g, '');
-          const uniqueFileName = `${formattedDate}-${sanitizedFileName}`;
-          const filePath = uniqueFileName;
 
-          const { error } = await this.supabaseService
-            .getSupabase()
-            .storage.from(process.env.STORAGE_BUCKET)
-            .upload(uniqueFileName, pdfAttachment.buffer, {
-              contentType: 'application/pdf',
-              cacheControl: '3600',
-              upsert: true,
-            });
+        const uploadedAttachements = await this.uploadAttachements(
+          pdfAttachments,
+          bulletin.id,
+        );
 
-          if (error) {
-            throw new Error(`Failed to upload file: ${error.message}`);
-          }
-
-          await tx.pDFAttachment.create({
-            data: {
-              bulletin_id: bulletin.id,
-              file_path: filePath,
-            },
-          });
-        }
+        await tx.pDFAttachment.createMany({
+          data: uploadedAttachements,
+        });
 
         return bulletin;
       } catch (error) {
         throw error;
       }
     });
+  }
+
+  async updateBulletin(
+    id: number,
+    updateBulletinDto: BulletinDTO,
+    pdfAttachments: Express.Multer.File[],
+  ) {
+    return this.prismaService.$transaction(async (tx) => {
+      try {
+        const { deleted_attachment_ids, ...bulletinData } = updateBulletinDto;
+        const updatedBulletin = await tx.bulletin.update({
+          where: { id },
+          data: {
+            ...bulletinData,
+          },
+        });
+
+        // Edge Case
+        if (!isEmpty(deleted_attachment_ids)) {
+          const existingAttachments = await tx.pDFAttachment.findMany({
+            where: {
+              id: { in: deleted_attachment_ids },
+              deleted_at: null,
+              bulletin_id: id,
+            },
+          });
+          const existingAttachmentIdsSet = existingAttachments.map(
+            (att) => att.id,
+          );
+
+          const nonExistingIds = deleted_attachment_ids.filter(
+            (id) => !existingAttachmentIdsSet.includes(id),
+          );
+
+          if (!isEmpty(nonExistingIds)) {
+            throw new Error(
+              `Attachments with IDs ${nonExistingIds.join(
+                ', ',
+              )} do not exists to bulletin ID: ${id}`,
+            );
+          }
+
+          await Promise.all(
+            deleted_attachment_ids.map((deleteID) =>
+              tx.pDFAttachment.update({
+                where: { id: deleteID },
+                data: { deleted_at: new Date() },
+              }),
+            ),
+          );
+        }
+
+        const attachments = [];
+
+        if (!isEmpty(pdfAttachments)) {
+          const uploadedAttachements = await this.uploadAttachements(
+            pdfAttachments,
+            updatedBulletin.id,
+          );
+
+          await tx.pDFAttachment.createMany({
+            data: uploadedAttachements,
+          });
+          attachments.push(uploadedAttachements);
+        }
+        return {
+          data: updatedBulletin,
+          attachments: attachments,
+        };
+      } catch (error) {
+        throw error;
+      }
+    });
+  }
+
+  async uploadAttachements(pdfAttachments, bulletinID) {
+    const urls = await Promise.all(
+      pdfAttachments.map(async (pdfAttachment) => {
+        const fileUrl = await this.supabaseService.uploadPdftoDb(pdfAttachment);
+        return fileUrl;
+      }),
+    );
+
+    const uploadedAttachements = urls.map((url) => ({
+      bulletin_id: bulletinID,
+      file_path: url,
+    }));
+
+    return uploadedAttachements;
   }
 }

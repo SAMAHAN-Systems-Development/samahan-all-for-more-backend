@@ -2,6 +2,10 @@ import {
   IsString,
   IsNotEmpty,
   IsInt,
+  IsOptional,
+  IsArray,
+  ArrayNotEmpty,
+  IsNumber,
   registerDecorator,
   ValidationOptions,
 } from 'class-validator';
@@ -21,11 +25,11 @@ function IsCategoryIdExists(validationOptions?: ValidationOptions) {
   };
 }
 
-export class AddBulletinDTO {
+export class BulletinDTO {
   @Type(() => Number)
+  @IsNotEmpty({ message: 'Category is required' })
   @IsInt({ message: 'Category ID must be an integer' })
   @IsCategoryIdExists({ message: 'Category doesnt exists' })
-  @IsNotEmpty({ message: 'Category is required' })
   category_id: number;
 
   @IsString({ message: 'Title must be a string' })
@@ -39,4 +43,10 @@ export class AddBulletinDTO {
   @IsString({ message: 'Author must be a string' })
   @IsNotEmpty({ message: 'Author is required' })
   author: string;
+  @IsOptional()
+  @IsArray({ message: 'Attachment IDs must be an array' })
+  @ArrayNotEmpty({ message: 'Attachment IDs array must not be empty' })
+  @Type(() => Number)
+  @IsNumber({}, { each: true, message: 'Each attachment ID must be a number' })
+  deleted_attachment_ids: number[];
 }
