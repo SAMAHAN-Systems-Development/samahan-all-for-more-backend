@@ -113,3 +113,8 @@ npm run start
   ```bash
   npx supabase stop
   ```
+
+## API Documentation
+
+- [Category API Documentation](./Docs/category.md)
+- [Bulletin API Documentation](./Docs/bulletin.md)
