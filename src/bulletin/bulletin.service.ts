@@ -152,4 +152,30 @@ export class BulletinService {
 
     return uploadedAttachements;
   }
+
+  async deleteBulletin(id: number) {
+    return this.prismaService.$transaction(async (tx) => {
+      try {
+        const dateNow = new Date();
+
+        await tx.bulletin.update({
+          where: { id },
+          data: {
+            deleted_at: dateNow,
+          },
+        });
+
+        await tx.pDFAttachment.updateMany({
+          where: { bulletin_id: id },
+          data: { deleted_at: dateNow },
+        });
+
+        return {
+          message: 'Bulletin successfully deleted',
+        };
+      } catch (error) {
+        throw error;
+      }
+    });
+  }
 }

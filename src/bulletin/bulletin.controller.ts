@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -24,6 +25,7 @@ import { BulletinDTO } from './bulletin.dto';
 import { ValidateNotSoftDeletePipe } from './bulleting.custom.pipe';
 import { createMessagePart, isEmpty } from '../utils/utils';
 import { Bulletin } from '@prisma/client';
+import { DeleteBulletinDTO } from './deleteBulletin.dto';
 
 @Controller('/api/bulletins')
 @UseGuards(AuthGuard)
@@ -161,5 +163,12 @@ export class BulletinController {
         error.message || 'An unexpected error occurred',
       );
     }
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  async deleteBulletin(@Param() deleteBulletinDTO: DeleteBulletinDTO) {
+    return this.bulletinService.deleteBulletin(deleteBulletinDTO.id);
   }
 }
