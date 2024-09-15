@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { BulletinModule } from './bulletin/bulletin.module';
 import { CategoryModule } from './category/category.module';
 import { LocationModule } from './location/location.module';
+import { EventModule } from './event/event.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { LocationModule } from './location/location.module';
     BulletinModule,
     CategoryModule,
     LocationModule,
+    EventModule,
   ],
   controllers: [AppController],
   providers: [AppService],
