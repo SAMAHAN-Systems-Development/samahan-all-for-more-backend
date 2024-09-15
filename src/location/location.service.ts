@@ -30,15 +30,14 @@ export class LocationService {
 
     if (!isEmpty(location.events)) {
       throw new HttpException(
-        `Location with id ${location.id} cannot be removed because it has existing events`,
+        `Location with id ${location.id} cannot be deleted because it has existing events`,
         HttpStatus.BAD_REQUEST,
       );
     }
 
     try {
-      await this.prismaService.location.update({
+      await this.prismaService.location.delete({
         where: { id },
-        data: { deleted_at: new Date() },
       });
       return { message: 'Location deleted successfully' };
     } catch {

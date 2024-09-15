@@ -13,7 +13,7 @@ export class LocationController {
 
   @Delete(':id')
   @UseGuards(AuthGuard)
-  remove(@Param('id') id: number) {
-    return this.locationService.remove(+id);
+  delete(@Param('id') id: number) {
+    return this.locationService.delete(+id);
   }
 }
