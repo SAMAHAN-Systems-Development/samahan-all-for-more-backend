@@ -7,15 +7,11 @@ export class LocationService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async findAll() {
-    const locations = this.prismaService.location.findMany({
-      where: {
-        deleted_at: null,
-      },
-    });
+    const locations = this.prismaService.location.findMany();
     return locations;
   }
 
-  async remove(id: number) {
+  async delete(id: number) {
     const location = await this.prismaService.location.findUnique({
       where: { id },
       include: { events: true },
