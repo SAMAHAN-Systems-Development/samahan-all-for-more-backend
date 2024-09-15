@@ -1,6 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateLocationDto } from './create-location.dto';
-import { UpdateLocationDto } from './update-location.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { isEmpty } from 'src/utils/utils';
 
