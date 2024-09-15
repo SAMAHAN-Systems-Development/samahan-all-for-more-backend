@@ -19,11 +19,10 @@ model User {
 
 model Location {
   id        Int      @id @default(autoincrement())
-  name      String
+  name      String   @unique
   address   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deleted_at DateTime?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
   events    Event[]
 }
 

@@ -1,7 +1,6 @@
-import { Controller, Get, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Delete, UseGuards } from '@nestjs/common';
 import { LocationService } from './location.service';
-import { CreateLocationDto } from './create-location.dto';
-import { UpdateLocationDto } from './update-location.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('/api/locations')
 export class LocationController {
@@ -10,5 +9,11 @@ export class LocationController {
   @Get()
   findAll() {
     return this.locationService.findAll();
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  delete(@Param('id') id: number) {
+    return this.locationService.delete(+id);
   }
 }

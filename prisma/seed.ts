@@ -88,8 +88,8 @@ async function seedLocations() {
   const locations = Array.from({ length: 30 }).map(() => ({
     name: faker.company.name(),
     address: faker.location.streetAddress(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    created_at: new Date(),
+    updated_at: new Date(),
   }));
 
   await prisma.location.createMany({ data: locations });
