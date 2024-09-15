@@ -1,4 +1,3 @@
-import path from 'path';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { SupabaseService } from '../supabase/supabase.service';
 import { faker } from '@faker-js/faker';
@@ -85,12 +84,26 @@ async function seedUsers() {
 }
 
 async function seedLocations() {
-  const locations = Array.from({ length: 30 }).map(() => ({
-    name: faker.company.name(),
-    address: faker.location.streetAddress(),
-    created_at: new Date(),
-    updated_at: new Date(),
-  }));
+  const uniqueNames = new Set<string>();
+  const locations: {
+    name: string;
+    address: string;
+    created_at: Date;
+    updated_at: Date;
+  }[] = [];
+
+  while (uniqueNames.size < 10) {
+    const name = faker.location.street();
+    if (!uniqueNames.has(name)) {
+      uniqueNames.add(name);
+      locations.push({
+        name,
+        address: faker.location.streetAddress(),
+        created_at: new Date(),
+        updated_at: new Date(),
+      });
+    }
+  }
 
   await prisma.location.createMany({ data: locations });
 }
@@ -126,12 +139,26 @@ async function seedPosters() {
 }
 
 async function seedCategories() {
-  const categories = Array.from({ length: 30 }).map(() => ({
-    name: faker.commerce.department(),
-    description: faker.lorem.sentence(),
-    created_at: new Date(),
-    updated_at: new Date(),
-  }));
+  const uniqueNames = new Set<string>();
+  const categories: {
+    name: string;
+    description: string;
+    created_at: Date;
+    updated_at: Date;
+  }[] = [];
+
+  while (uniqueNames.size < 10) {
+    const name = faker.commerce.department();
+    if (!uniqueNames.has(name)) {
+      uniqueNames.add(name);
+      categories.push({
+        name,
+        description: faker.lorem.sentence(),
+        created_at: new Date(),
+        updated_at: new Date(),
+      });
+    }
+  }
 
   await prisma.category.createMany({ data: categories });
 }
