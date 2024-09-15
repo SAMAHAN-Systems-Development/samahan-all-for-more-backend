@@ -19,7 +19,7 @@ model User {
 
 model Location {
   id        Int      @id @default(autoincrement())
-  name      String
+  name      String   @unique
   address   String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
