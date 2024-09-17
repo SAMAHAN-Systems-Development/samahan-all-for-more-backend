@@ -10,6 +10,7 @@ async function bootstrap() {
     origin: process.env.FRONTEND_URL,
   });
   app.useGlobalPipes(new ValidationPipe());
+  app.setGlobalPrefix('/api');
 
   const config = new DocumentBuilder()
     .setTitle('SAMAHAN')

@@ -27,7 +27,7 @@ import { createMessagePart, isEmpty } from '../utils/utils';
 import { Bulletin } from '@prisma/client';
 import { DeleteBulletinDTO } from './deleteBulletin.dto';
 
-@Controller('/api/bulletins')
+@Controller('/bulletins')
 @UseGuards(AuthGuard)
 export class BulletinController {
   constructor(private readonly bulletinService: BulletinService) {}
