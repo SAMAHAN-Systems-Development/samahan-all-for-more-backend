@@ -6,6 +6,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCategoryDto } from './createCategory.dto';
 import { UpdateCategoryDto } from './updateCategory.dto';
+import { PrismaErrorCode } from '../enums/prisma-error';
 
 @Injectable()
 export class CategoryService {
@@ -21,7 +22,7 @@ export class CategoryService {
         messsage: 'Category successfully created',
       };
     } catch (error) {
-      if (error.code === 'P2002') {
+      if (error.code === PrismaErrorCode.UniqueConstraintViolation) {
         throw new ConflictException(`Category with this name already exists`);
       } else {
         throw new Error(
@@ -44,7 +45,7 @@ export class CategoryService {
 
       return updatedCategory;
     } catch (error) {
-      if (error.code === 'P2025') {
+      if (error.code === PrismaErrorCode.OperationFailedDueToMissingRecords) {
         throw new NotFoundException(`Category with id ${id} not found`);
       } else {
         throw new Error(
