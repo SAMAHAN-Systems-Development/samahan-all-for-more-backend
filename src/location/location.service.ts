@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { CreateLocationDto } from './create-location.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { isEmpty } from 'src/utils/utils';
 
@@ -9,6 +10,28 @@ export class LocationService {
   async findAll() {
     const locations = this.prismaService.location.findMany();
     return locations;
+  }
+
+  async createLocation(data: CreateLocationDto) {
+    try {
+      await this.prismaService.location.create({
+        data,
+      });
+
+      return { message: 'Successfully created a location' };
+    } catch (error) {
+      if (error.code === 'P2002') {
+        throw new HttpException(
+          `Location name '${data.name}' is already taken`,
+          HttpStatus.CONFLICT,
+        );
+      } else {
+        throw new HttpException(
+          'Failed to create a location',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
   }
 
   async delete(id: number) {
