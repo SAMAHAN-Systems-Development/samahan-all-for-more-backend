@@ -102,6 +102,13 @@ Sample Request:
 PUT /api/locations/1
 ```
 
+```JSON
+{
+    "name": "Roxas Gate",
+    "address": "Roxas Ave., Davao City",
+}
+```
+
 Sample Success Response:
 
 **200 OK**
