@@ -1,7 +1,14 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateLocationDto } from './create-location.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { isEmpty } from 'src/utils/utils';
+import { UpdateLocationDto } from './update-location.dto';
+import { PrismaErrorCode } from 'src/enums/prisma-error';
 
 @Injectable()
 export class LocationService {
@@ -64,6 +71,32 @@ export class LocationService {
         'Error deleting location',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+  async updateLocation(id: number, data: UpdateLocationDto) {
+    try {
+      const updatedCategory = await this.prismaService.location.update({
+        where: { id },
+        data,
+      });
+
+      return updatedCategory;
+    } catch (error) {
+      if (error.code === PrismaErrorCode.UniqueConstraintViolation) {
+        throw new HttpException(
+          `Location name '${data.name}' is already taken`,
+          HttpStatus.CONFLICT,
+        );
+      } else if (
+        error.code === PrismaErrorCode.OperationFailedDueToMissingRecords
+      ) {
+        throw new NotFoundException(`Category with id ${id} not found`);
+      } else {
+        throw new Error(
+          'An unexpected error occurred while updating the category',
+        );
+      }
     }
   }
 }
