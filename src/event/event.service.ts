@@ -1,13 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateEventDto } from './create-event.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { isEmpty } from 'class-validator';
+import { SupabaseService } from '../../supabase/supabase.service';
 
 @Injectable()
 export class EventService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly supabaseService: SupabaseService,
+  ) {}
 
-  async createEvent(data: CreateEventDto) {
+  async createEvent(data: CreateEventDto, files: Express.Multer.File[]) {
     const {
       name,
       description,
@@ -15,14 +18,14 @@ export class EventService {
       start_time,
       end_time,
       location_id,
-      posters,
     } = data;
+
     try {
       const conflictingEvent = await this.prismaService.event.findFirst({
         where: {
-          location_id,
-          start_time,
-          end_time,
+          location_id: location_id,
+          start_time: new Date(start_time),
+          end_time: new Date(end_time),
         },
       });
 
@@ -45,22 +48,26 @@ export class EventService {
           },
         });
 
-        if (posters && !isEmpty(posters)) {
-          const posterData = posters.map(({ image_url, description }) => ({
-            event_id: newEvent.id,
-            image_url,
-            description,
-          }));
+        if (files.length > 0) {
+          for (const file of files) {
+            const uniqueFileName = `${Date.now()}-${file.originalname}`;
+            const posterUrl = await this.supabaseService.uploadPosterToBucket(
+              file,
+            );
 
-          await prisma.poster.createMany({
-            data: posterData,
-          });
+            await prisma.poster.create({
+              data: {
+                event_id: newEvent.id,
+                image_url: posterUrl,
+              },
+            });
+          }
         }
 
         return newEvent;
       });
 
-      return { message: 'Event created successfully' };
+      return event;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

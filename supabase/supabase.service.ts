@@ -48,6 +48,29 @@ export class SupabaseService {
 
     return getUrl.data.publicUrl;
   }
+
+  async uploadPosterToBucket(file: Express.Multer.File): Promise<string> {
+    const fileName = generateUniqueFileName(file.originalname);
+    const { data, error } = await this.supabase.storage
+      .from('posterImages')
+      .upload(fileName, file.buffer, { contentType: file.mimetype });
+
+    if (error) {
+      console.error('Failed to upload to bucket:', error);
+      throw new Error('Failed to upload poster image');
+    }
+
+    const {
+      data: { publicUrl },
+    } = this.supabase.storage.from('posterImages').getPublicUrl(fileName);
+
+    if (!publicUrl) {
+      throw new Error('Failed to retrieve public URL for poster');
+    }
+
+    return publicUrl;
+  }
+
   // FiletoBase64(file: Express.Multer.File) {
   //   let fileToBase64;
   //   try {

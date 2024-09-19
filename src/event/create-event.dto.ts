@@ -1,23 +1,5 @@
-import { Type } from 'class-transformer';
-import {
-  IsArray,
-  IsInt,
-  IsISO8601,
-  IsNotEmpty,
-  IsString,
-  IsUrl,
-  ValidateNested,
-} from 'class-validator';
-
-class PosterDto {
-  @IsUrl()
-  @IsNotEmpty()
-  image_url: string;
-
-  @IsString()
-  @IsNotEmpty()
-  description: string;
-}
+import { Transform } from 'class-transformer';
+import { IsInt, IsISO8601, IsNotEmpty, IsString, IsUrl } from 'class-validator';
 
 export class CreateEventDto {
   @IsString()
@@ -42,10 +24,8 @@ export class CreateEventDto {
 
   @IsInt()
   @IsNotEmpty()
+  @Transform(({ value }) => {
+    return Number(value);
+  })
   location_id: number;
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => PosterDto)
-  posters: PosterDto[];
 }
