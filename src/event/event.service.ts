@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateEventDto } from './create-event.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { isEmpty } from 'class-validator';
 
 @Injectable()
 export class EventService {
@@ -43,13 +44,15 @@ export class EventService {
           },
         });
 
-        if (posters && posters.length > 0) {
+        if (posters && !isEmpty(posters)) {
+          const posterData = posters.map(({ image_url, description }) => ({
+            event_id: newEvent.id,
+            image_url,
+            description,
+          }));
+
           await prisma.poster.createMany({
-            data: posters.map((poster) => ({
-              event_id: newEvent.id,
-              image_url: poster.image_url,
-              description: poster.description,
-            })),
+            data: posterData,
           });
         }
 
