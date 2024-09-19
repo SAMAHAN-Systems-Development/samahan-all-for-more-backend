@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateEventDto } from './createEvent.dto';
+import { CreateEventDto } from './create-event.dto';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
