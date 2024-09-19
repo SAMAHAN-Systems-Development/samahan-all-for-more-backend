@@ -5,6 +5,43 @@ import { faker } from '@faker-js/faker';
 const prisma = new PrismaService();
 const supabase = new SupabaseService();
 
+async function createImageBucketIfNotExists() {
+  try {
+    const imageBucketName = 'posterImages';
+
+    const { data: buckets, error: listError } = await supabase
+      .getSupabase()
+      .storage.listBuckets();
+
+    if (listError) {
+      throw new Error(`Failed to list buckets: ${listError.message}`);
+    }
+
+    const bucketExists = buckets.some(
+      (bucket) => bucket.name === imageBucketName,
+    );
+
+    if (!bucketExists) {
+      const { data, error } = await supabase
+        .getSupabase()
+        .storage.createBucket(imageBucketName, {
+          public: true,
+          allowedMimeTypes: ['image/jpeg', 'image/png', 'image/gif'],
+        });
+
+      if (error) {
+        throw new Error(`Failed to create image bucket: ${error.message}`);
+      }
+
+      console.log('Image bucket created successfully:', data);
+    } else {
+      console.log('Image bucket already exists');
+    }
+  } catch (error) {
+    console.error('Error managing image bucket:', error);
+  }
+}
+
 async function createBucketIfNotExists() {
   try {
     const bucketName = process.env.STORAGE_BUCKET;
@@ -192,6 +229,7 @@ async function seedPDFAttachments() {
 }
 
 async function main() {
+  await createImageBucketIfNotExists();
   await createBucketIfNotExists();
   await seedUsers();
   await seedLocations();
