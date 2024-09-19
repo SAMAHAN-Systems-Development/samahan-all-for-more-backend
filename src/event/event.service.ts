@@ -22,6 +22,7 @@ export class EventService {
         where: {
           location_id,
           start_time,
+          end_time,
         },
       });
 
