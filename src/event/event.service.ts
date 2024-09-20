@@ -5,15 +5,25 @@ import { PrismaService } from '../prisma/prisma.service';
 export class EventService {
   constructor(private prisma: PrismaService) {}
 
-  async findAllEvents(page = 1, limit = 10) {
+  async findAllEvents(page: number, limit: number) {
     const skip = (page - 1) * limit;
-    const totalEvents = await this.prisma.event.count();
+    const totalEvents = await this.prisma.event.count({
+      where: {
+        deleted_at: null,
+      },
+    });
 
     const events = await this.prisma.event.findMany({
       skip: skip,
       take: limit,
+      where: {
+        deleted_at: null,
+      },
       include: {
         location: true,
+      },
+      orderBy: {
+        created_at: 'desc',
       },
     });
 
