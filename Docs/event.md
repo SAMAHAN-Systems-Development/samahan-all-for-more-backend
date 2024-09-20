@@ -10,7 +10,7 @@ registration_link: string, required
 start_time: string, required
 end_time: string, required
 location_id: int, required
-posters: poster[], optional
+posters: image/jpeg, image/png, image/gif, optional
 ```
 
 Sample Request:
@@ -23,16 +23,7 @@ Sample Request:
   "start_time": "2028-10-15T09:00:00Z",
   "end_time": "2028-10-15T17:00:00Z",
   "location_id": 3,
-  "posters": [
-    {
-      "image_url": "https://example.com/poster1.jpg",
-      "description": "Main Event Poster"
-    },
-    {
-      "image_url": "https://example.com/poster2.jpg",
-      "description": "Secondary Event Poster"
-    }
-  ]
+  "posters": image/jpeg[]
 }
 ```
 
