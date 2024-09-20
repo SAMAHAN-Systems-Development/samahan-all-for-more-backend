@@ -55,6 +55,12 @@ export class EventService {
         };
       }
 
+      if (event.deleted_at) {
+        return {
+          message: `Event with id ${id} has already been deleted`,
+        };
+      }
+
       await this.prisma.$transaction([
         this.prisma.poster.updateMany({
           where: { event_id: id },
