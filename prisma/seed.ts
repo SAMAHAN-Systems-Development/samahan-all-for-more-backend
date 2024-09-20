@@ -110,16 +110,21 @@ async function seedLocations() {
 
 async function seedEvents() {
   const locations = await prisma.location.findMany();
-  const events = Array.from({ length: 50 }).map(() => ({
-    location_id: faker.helpers.arrayElement(locations).id,
-    name: faker.lorem.words(3),
-    description: faker.lorem.paragraph(),
-    registration_link: faker.internet.url(),
-    start_time: faker.date.future(),
-    end_time: faker.date.future(),
-    created_at: new Date(),
-    updated_at: new Date(),
-  }));
+  const events = Array.from({ length: 50 }).map(() => {
+    const startTime = faker.date.future();
+    const endTime = new Date(startTime.getTime() + 24 * 60 * 60 * 1000);
+
+    return {
+      location_id: faker.helpers.arrayElement(locations).id,
+      name: faker.lorem.words(3),
+      description: faker.lorem.paragraph(),
+      registration_link: faker.internet.url(),
+      start_time: startTime,
+      end_time: endTime,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+  });
 
   await prisma.event.createMany({ data: events });
 }
