@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateEventDto } from './create-event.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupabaseService } from '../../supabase/supabase.service';
+import { isEmpty } from 'class-validator';
 
 @Injectable()
 export class EventService {
@@ -48,7 +49,7 @@ export class EventService {
           },
         });
 
-        if (files.length > 0) {
+        if (files && !isEmpty(files)) {
           for (const file of files) {
             const uniqueFileName = `${Date.now()}-${file.originalname}`;
             const posterUrl = await this.supabaseService.uploadPosterToBucket(
