@@ -48,6 +48,16 @@ Sample Success Response:
 
 Sample Error Responses:
 
+**400 Bad Request (event start time is earlier than end time)**
+
+```json
+{
+  "message": ["Start time must be earlier than end_time"],
+  "error": "Bad Request",
+  "statusCode": "400"
+}
+```
+
 **409 Conflict (event in the same location at the same time already exists)**
 
 ```json
