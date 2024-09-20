@@ -52,3 +52,31 @@ Sample Success Response
     "totalPages": 5
 }
 ```
+
+## DELETE /api/events/{id}
+
+Sample Request:
+
+```json
+DELETE /api/events/28
+```
+
+Sample Success Response:
+
+**200 OK**
+
+```json
+{
+  "message": "Event with id 28 and its posters deleted successfully"
+}
+```
+
+Error Response:
+
+**404 Not Found**
+
+```json
+{
+    "message": "Event with id 28 not found"
+}
+```
