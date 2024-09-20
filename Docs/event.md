@@ -1,12 +1,26 @@
 # API
 
 ## GET /api/events
+This endpoint retrieves a list of all events.
 
+```
+Method: GET
+Path: /api/events
+Query Parameters:
+- Page: The current page number. Default is 1
+- Limit: The maximum number of items to return per page. Default is 10
+```
 
-Success Response:
+Example Requests
+```
+GET /api/events
+GET /api/events?page=2
+GET /api/events?page=2&limit=15
+```
+
+Success Response
 
 - **Status:** 200 OK
-- **Description:** A list of events.
 
 Sample Success Response
 
