@@ -23,7 +23,7 @@ export class EventService {
         location: true,
       },
       orderBy: {
-        created_at: 'desc',
+        start_time: 'asc',
       },
     });
 
