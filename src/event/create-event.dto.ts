@@ -1,5 +1,6 @@
 import { Transform } from 'class-transformer';
 import { IsInt, IsISO8601, IsNotEmpty, IsString, IsUrl } from 'class-validator';
+import { IsStartTimeBeforeEndTime } from './is-start-time-before-end-time.constraint';
 
 export class CreateEventDto {
   @IsString()
@@ -16,6 +17,7 @@ export class CreateEventDto {
 
   @IsISO8601()
   @IsNotEmpty()
+  @IsStartTimeBeforeEndTime('end_time')
   start_time: string;
 
   @IsISO8601()
@@ -24,8 +26,6 @@ export class CreateEventDto {
 
   @IsInt()
   @IsNotEmpty()
-  @Transform(({ value }) => {
-    return Number(value);
-  })
+  @Transform(({ value }) => Number(value))
   location_id: number;
 }
