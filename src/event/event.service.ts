@@ -42,4 +42,35 @@ export class EventService {
       totalPages: Math.ceil(totalEvents / limit),
     };
   }
+
+  async deleteEvent(id: number) {
+    try {
+      const event = await this.prisma.event.findUnique({
+        where: { id },
+      });
+
+      if (!event) {
+        return {
+          message: `Event with id ${id} not found`,
+        };
+      }
+
+      await this.prisma.$transaction([
+        this.prisma.poster.updateMany({
+          where: { event_id: id },
+          data: { deleted_at: new Date() },
+        }),
+        this.prisma.event.update({
+          where: { id },
+          data: { deleted_at: new Date() },
+        }),
+      ]);
+
+      return {
+        message: `Event with id ${id} and its posters deleted successfully`,
+      };
+    } catch (error) {
+      throw new Error(`Failed to delete event id ${id}: ${error.message}`);
+    }
+  }
 }
