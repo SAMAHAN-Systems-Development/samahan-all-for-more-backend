@@ -166,7 +166,6 @@ async function seedPosters() {
   const posters = Array.from({ length: 50 }).map(() => ({
     event_id: faker.helpers.arrayElement(events).id,
     image_url: faker.image.url(),
-    description: faker.lorem.sentence(),
     created_at: new Date(),
     updated_at: new Date(),
     deleted_at: null,
