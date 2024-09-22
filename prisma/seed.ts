@@ -25,7 +25,7 @@ async function createImageBucketIfNotExists() {
       const { data, error } = await supabase
         .getSupabase()
         .storage.createBucket(imageBucketName, {
-          public: true,
+          public: false,
           allowedMimeTypes: ['image/jpeg', 'image/png', 'image/gif'],
         });
 
