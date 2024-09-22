@@ -33,12 +33,12 @@ async function createImageBucketIfNotExists() {
         throw new Error(`Failed to create image bucket: ${error.message}`);
       }
 
-      console.log('Image bucket created successfully:', data);
+      return `Image bucket created successfully: ${JSON.stringify(data)}`;
     } else {
-      console.log('Image bucket already exists');
+      return `Image bucket '${imageBucketName}' already exists.`;
     }
   } catch (error) {
-    console.error('Error managing image bucket:', error);
+    throw new Error(`Error managing image bucket: ${error.message}`);
   }
 }
 
