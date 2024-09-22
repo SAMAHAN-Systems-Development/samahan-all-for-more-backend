@@ -7,7 +7,7 @@ const supabase = new SupabaseService();
 
 async function createImageBucketIfNotExists() {
   try {
-    const imageBucketName = 'posterImages';
+    const imageBucketName = process.env.POSTER_IMAGE_BUCKET;
 
     const { data: buckets, error: listError } = await supabase
       .getSupabase()

@@ -51,8 +51,8 @@ export class SupabaseService {
 
   async uploadPosterToBucket(file: Express.Multer.File): Promise<string> {
     const fileName = generateUniqueFileName(file.originalname);
-    const { data, error } = await this.supabase.storage
-      .from('posterImages')
+    const { error } = await this.supabase.storage
+      .from(process.env.POSTER_IMAGE_BUCKET)
       .upload(fileName, file.buffer, { contentType: file.mimetype });
 
     if (error) {
