@@ -50,19 +50,20 @@ export class EventService {
         });
 
         if (files && !isEmpty(files)) {
-          for (const file of files) {
-            const uniqueFileName = `${Date.now()}-${file.originalname}`;
+          const fileUploadPromises = files.map(async (file) => {
             const posterUrl = await this.supabaseService.uploadPosterToBucket(
               file,
             );
 
-            await prisma.poster.create({
+            return prisma.poster.create({
               data: {
                 event_id: newEvent.id,
                 image_url: posterUrl,
               },
             });
-          }
+          });
+
+          await Promise.all(fileUploadPromises);
         }
 
         return newEvent;

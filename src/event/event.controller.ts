@@ -25,7 +25,7 @@ export class EventController {
     createEventDto.location_id = Number(createEventDto.location_id);
 
     try {
-      this.eventService.createEvent(createEventDto, files.poster_images);
+      await this.eventService.createEvent(createEventDto, files.poster_images);
 
       return { message: 'Event created successfully' };
     } catch (error) {
