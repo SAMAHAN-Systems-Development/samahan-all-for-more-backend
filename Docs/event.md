@@ -49,6 +49,16 @@ Sample Error Responses:
 }
 ```
 
+**400 Bad Request (invalid poster image upload file type)**
+
+```json
+{
+  "message": "Invalid file type: application/pdf. Only JPEG, PNG, and GIF are allowed.",
+  "error": "Bad Request",
+  "statusCode": "400"
+}
+```
+
 **409 Conflict (event in the same location at the same time already exists)**
 
 ```json
