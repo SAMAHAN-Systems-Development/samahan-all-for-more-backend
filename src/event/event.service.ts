@@ -75,7 +75,6 @@ export class EventService {
         throw error;
       }
 
-      console.error('Error creating event:', error);
       throw new HttpException(
         'An unexpected error occurred while creating the event',
         HttpStatus.INTERNAL_SERVER_ERROR,
