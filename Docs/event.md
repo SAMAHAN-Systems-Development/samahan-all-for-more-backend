@@ -41,7 +41,7 @@ Sample Success Response:
 
 Sample Error Responses:
 
-**400 Bad Request (event start time is earlier than end time)**
+**400 Bad Request (event end time is earlier than start time)**
 
 ```json
 {
@@ -67,6 +67,104 @@ Sample Error Responses:
 {
   "statusCode": 409,
   "message": "An event is already scheduled at this location at the same time"
+}
+```
+
+## PUT /api/events/{id}
+
+Request:
+
+```
+method: PUT
+name: string, optional
+description: string, optional
+registration_link: string, optional
+start_time: string, optional
+end_time: string, optional
+location_id: int, optional
+poster_images: image/jpeg, image/png, image/gif, optional
+delete_poster_ids: int[], optional
+```
+
+Sample Request:
+
+```json
+{
+  "name": "Palaro 2025",
+  "location_id": 9,
+  "poster_images": image/jpeg[],
+  "delete_poster_ids": [52, 51]
+}
+```
+
+Sample Success Response:
+
+**200 OK**
+
+```json
+{
+  "message": "Event updated successfully",
+  "data": {
+    "id": 51,
+    "location_id": 9,
+    "name": "Palaro 2025",
+    "description": "A grand event featuring sports competitions between different schools.",
+    "registration_link": "https://example.com/register",
+    "start_time": "2028-10-15T09:00:00Z",
+    "end_time": "2028-10-15T17:00:00Z",
+    "created_at": "2024-09-27T13:22:50.349Z",
+    "updated_at": "2024-09-27T14:54:43.924Z",
+    "deleted_at": null
+  }
+}
+```
+
+Sample Error Responses:
+
+**400 Bad Request (event end time is earlier than start time)**
+
+```json
+{
+  "message": ["Start time must be earlier than end_time"],
+  "error": "Bad Request",
+  "statusCode": "400"
+}
+```
+
+**400 Bad Request (invalid poster image upload file type)**
+
+```json
+{
+  "message": "Invalid file type: application/pdf. Only JPEG, PNG, and GIF are allowed.",
+  "error": "Bad Request",
+  "statusCode": "400"
+}
+```
+
+**409 Conflict (event in the same location at the same time already exists)**
+
+```json
+{
+  "statusCode": 409,
+  "message": "An event is already scheduled at this location at the same time"
+}
+```
+
+**400 Bad Request (some delete_poster_ids are invalid or do not belong to event being updated)**
+
+```json
+{
+  "statusCode": 400,
+  "message": "Some poster IDs are invalid or do not belong to this event"
+}
+```
+
+**404 Not Found (provided event id does not exist in the database)**
+
+```json
+{
+  "statusCode": 404,
+  "message": "Event with id 100 not found"
 }
 ```
 
