@@ -53,6 +53,35 @@ Sample Success Response
 }
 ```
 
+## DELETE /api/events/{id}
+
+Sample Request:
+
+```json
+DELETE /api/events/28
+```
+
+Sample Success Response:
+
+**200 OK**
+
+```json
+{
+  "message": "Event with id 28 and its posters deleted successfully"
+}
+```
+
+Error Response:
+
+**404 Not Found**
+
+```json
+{
+    "message": "Event with id 28 not found"
+}
+```
+
+<<<<<<< HEAD
 ## POST /api/events
 
 Request:
@@ -67,10 +96,14 @@ end_time: string, required
 location_id: int, required
 poster_images: image/jpeg, image/png, image/gif, optional
 ```
+=======
+## DELETE /api/events/{id}
+>>>>>>> main
 
 Sample Request:
 
 ```json
+<<<<<<< HEAD
 {
   "name": "Palaro 2024",
   "description": "A grand event featuring sports competitions between different schools.",
@@ -80,10 +113,14 @@ Sample Request:
   "location_id": 3,
   "poster_images": image/jpeg[]
 }
+=======
+DELETE /api/events/28
+>>>>>>> main
 ```
 
 Sample Success Response:
 
+<<<<<<< HEAD
 **201 Created**
 
 ```json
@@ -122,3 +159,22 @@ Sample Error Responses:
   "message": "An event is already scheduled at this location at the same time"
 }
 ```
+=======
+**200 OK**
+
+```json
+{
+  "message": "Event with id 28 and its posters deleted successfully"
+}
+```
+
+Error Response:
+
+**404 Not Found**
+
+```json
+{
+    "message": "Event with id 28 not found"
+}
+```
+>>>>>>> main
