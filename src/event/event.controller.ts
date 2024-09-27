@@ -19,6 +19,8 @@ import { Event } from '@prisma/client';
 
 @Controller('/events')
 @UseGuards(AuthGuard)
+@Controller('/events')
+@UseGuards(AuthGuard)
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
