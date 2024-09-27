@@ -23,9 +23,6 @@ import { UpdateEventDto } from './update-event.dto';
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
 
 @Controller('/events')
-@UseGuards(AuthGuard)
-@Controller('/events')
-@UseGuards(AuthGuard)
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
@@ -118,6 +115,7 @@ export class EventController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   async delete(@Param('id', ParseIntPipe) id: number) {
     return this.eventService.deleteEvent(id);
   }
