@@ -5,6 +5,43 @@ import { faker } from '@faker-js/faker';
 const prisma = new PrismaService();
 const supabase = new SupabaseService();
 
+async function createImageBucketIfNotExists() {
+  try {
+    const imageBucketName = process.env.POSTER_IMAGE_BUCKET;
+
+    const { data: buckets, error: listError } = await supabase
+      .getSupabase()
+      .storage.listBuckets();
+
+    if (listError) {
+      throw new Error(`Failed to list buckets: ${listError.message}`);
+    }
+
+    const bucketExists = buckets.some(
+      (bucket) => bucket.name === imageBucketName,
+    );
+
+    if (!bucketExists) {
+      const { data, error } = await supabase
+        .getSupabase()
+        .storage.createBucket(imageBucketName, {
+          public: false,
+          allowedMimeTypes: ['image/jpeg', 'image/png', 'image/gif'],
+        });
+
+      if (error) {
+        throw new Error(`Failed to create image bucket: ${error.message}`);
+      }
+
+      return `Image bucket created successfully: ${JSON.stringify(data)}`;
+    } else {
+      return `Image bucket '${imageBucketName}' already exists.`;
+    }
+  } catch (error) {
+    throw new Error(`Error managing image bucket: ${error.message}`);
+  }
+}
+
 async function createBucketIfNotExists() {
   try {
     const bucketName = process.env.STORAGE_BUCKET;
@@ -134,7 +171,6 @@ async function seedPosters() {
   const posters = Array.from({ length: 50 }).map(() => ({
     event_id: faker.helpers.arrayElement(events).id,
     image_url: faker.image.url(),
-    description: faker.lorem.sentence(),
     created_at: new Date(),
     updated_at: new Date(),
     deleted_at: null,
@@ -197,6 +233,7 @@ async function seedPDFAttachments() {
 }
 
 async function main() {
+  await createImageBucketIfNotExists();
   await createBucketIfNotExists();
   await seedUsers();
   await seedLocations();

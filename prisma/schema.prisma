@@ -45,7 +45,6 @@ model Poster {
   id          Int      @id @default(autoincrement())
   event_id    Int
   image_url   String
-  description String
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
   deleted_at  DateTime?
