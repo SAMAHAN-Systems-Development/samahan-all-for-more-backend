@@ -2,7 +2,9 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Post,
+  Query,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -13,8 +15,10 @@ import { CreateEventDto } from './create-event.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
+import { Event } from '@prisma/client';
 
 @Controller('/events')
+@UseGuards(AuthGuard)
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
@@ -49,5 +53,13 @@ export class EventController {
     } catch (error) {
       throw error;
     }
+  }
+
+  @Get()
+  async findAll(
+    @Query() query: { page: number; limit?: number },
+  ): Promise<{ data: Event[] }> {
+    const { page = 1, limit = 10 } = query;
+    return this.eventService.findAllEvents(Number(page), Number(limit));
   }
 }

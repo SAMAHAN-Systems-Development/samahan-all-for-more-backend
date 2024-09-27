@@ -81,4 +81,42 @@ export class EventService {
       );
     }
   }
+
+  async findAllEvents(page: number, limit: number) {
+    const skip = (page - 1) * limit;
+    const currentDate = new Date();
+
+    const totalEvents = await this.prismaService.event.count({
+      where: {
+        deleted_at: null,
+        start_time: {
+          gte: currentDate,
+        },
+      },
+    });
+
+    const events = await this.prismaService.event.findMany({
+      skip: skip,
+      take: limit,
+      where: {
+        deleted_at: null,
+        start_time: {
+          gte: currentDate,
+        },
+      },
+      include: {
+        location: true,
+      },
+      orderBy: {
+        start_time: 'asc',
+      },
+    });
+
+    return {
+      data: events,
+      totalEvents,
+      currentPage: page,
+      totalPages: Math.ceil(totalEvents / limit),
+    };
+  }
 }
