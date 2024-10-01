@@ -101,21 +101,19 @@ export class EventService {
         );
       }
 
-      if (data.start_time || data.end_time || data.location_id) {
-        const conflictingEvent = await this.prismaService.event.findFirst({
-          where: {
-            location_id: data.location_id,
-            start_time: new Date(data.start_time),
-            end_time: new Date(data.end_time),
-          },
-        });
+      const conflictingEvent = await this.prismaService.event.findFirst({
+        where: {
+          location_id: data.location_id,
+          start_time: new Date(data.start_time),
+          end_time: new Date(data.end_time),
+        },
+      });
 
-        if (conflictingEvent && conflictingEvent.id !== id) {
-          throw new HttpException(
-            'An event is already scheduled at this location at the same time',
-            HttpStatus.CONFLICT,
-          );
-        }
+      if (conflictingEvent && conflictingEvent.id !== id) {
+        throw new HttpException(
+          'An event is already scheduled at this location at the same time',
+          HttpStatus.CONFLICT,
+        );
       }
 
       const updatedEvent = await this.prismaService.$transaction(
