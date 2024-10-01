@@ -6,7 +6,9 @@ import { Transform } from 'class-transformer';
 export class UpdateEventDto extends PartialType(CreateEventDto) {
   @IsOptional()
   @IsArray()
-  @Transform(({ value }) => value.map(Number))
+  @Transform(({ value }) => {
+    return Array.isArray(value) ? value.map(Number) : [Number(value)];
+  })
   @IsNumber({}, { each: true })
   delete_poster_ids?: number[];
 }
