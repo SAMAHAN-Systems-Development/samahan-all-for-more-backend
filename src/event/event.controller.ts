@@ -92,18 +92,17 @@ export class EventController {
     @Body() updateEventDto: UpdateEventDto,
     @UploadedFiles() files: { poster_images?: Express.Multer.File[] },
   ) {
-    try {
-      const updatedEvent = await this.eventService.updateEvent(
-        id,
-        updateEventDto,
-        files.poster_images,
-        updateEventDto.delete_poster_ids,
-      );
+    const updatedEvent = await this.eventService.updateEvent(
+      id,
+      updateEventDto,
+      files.poster_images,
+      updateEventDto.delete_poster_ids,
+    );
 
-      return { message: 'Event updated successfully', data: updatedEvent };
-    } catch (error) {
-      throw error;
-    }
+    return {
+      message: 'Event updated successfully',
+      data: updatedEvent,
+    };
   }
 
   @Get()
