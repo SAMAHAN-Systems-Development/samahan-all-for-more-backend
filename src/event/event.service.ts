@@ -168,7 +168,11 @@ export class EventService {
             await Promise.all(fileUploadPromises);
           }
 
-          return updated;
+          const updatedPosters = await prisma.poster.findMany({
+            where: { event_id: updated.id, deleted_at: null },
+          });
+
+          return { updatedEvent: updated, updatedPosters };
         },
       );
 
