@@ -12,6 +12,8 @@ import {
   Param,
   ParseIntPipe,
   Put,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { AuthGuard } from '../auth/auth.guard';
@@ -27,6 +29,11 @@ export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @Post()
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+    }),
+  )
   @UseGuards(AuthGuard)
   @UseInterceptors(
     FileFieldsInterceptor([{ name: 'poster_images' }], {
@@ -48,8 +55,6 @@ export class EventController {
     @Body() createEventDto: CreateEventDto,
     @UploadedFiles() files: { poster_images?: Express.Multer.File[] },
   ) {
-    createEventDto.location_id = Number(createEventDto.location_id);
-
     try {
       await this.eventService.createEvent(createEventDto, files.poster_images);
 
@@ -60,6 +65,11 @@ export class EventController {
   }
 
   @Put(':id')
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+    }),
+  )
   @UseGuards(AuthGuard)
   @UseInterceptors(
     FileFieldsInterceptor([{ name: 'poster_images' }], {
@@ -82,16 +92,6 @@ export class EventController {
     @Body() updateEventDto: UpdateEventDto,
     @UploadedFiles() files: { poster_images?: Express.Multer.File[] },
   ) {
-    if (updateEventDto.location_id) {
-      updateEventDto.location_id = Number(updateEventDto.location_id);
-    }
-
-    if (updateEventDto.delete_poster_ids) {
-      updateEventDto.delete_poster_ids = updateEventDto.delete_poster_ids.map(
-        (id) => Number(id),
-      );
-    }
-
     try {
       const updatedEvent = await this.eventService.updateEvent(
         id,
