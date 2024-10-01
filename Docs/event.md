@@ -93,7 +93,7 @@ Sample Request:
   "name": "Palaro 2025",
   "location_id": 9,
   "poster_images": image/jpeg[],
-  "delete_poster_ids": [52, 51]
+  "delete_poster_ids": [51, 52]
 }
 ```
 
@@ -115,7 +115,27 @@ Sample Success Response:
     "created_at": "2024-09-27T13:22:50.349Z",
     "updated_at": "2024-09-27T14:54:43.924Z",
     "deleted_at": null
-  }
+  },
+  "updatedPosters": [
+    {
+      {
+        "id": 51,
+        "event_id": 51,
+        "image_url": "http://127.0.0.1:54321/storage/v1/object/public/posterImages/01-10-2024-20-20-03-image1.png",
+        "created_at": "2024-10-01T12:20:03.009Z",
+        "updated_at": "2024-10-01T12:20:03.009Z",
+        "deleted_at": null
+      },
+      {
+        "id": 52,
+        "event_id": 51,
+        "image_url": "http://127.0.0.1:54321/storage/v1/object/public/posterImages/01-10-2024-20-20-03-image2.png",
+        "created_at": "2024-10-01T12:41:32.733Z",
+        "updated_at": "2024-10-01T12:41:32.733Z",
+        "deleted_at": null
+      }
+    }
+  ]
 }
 ```
 
