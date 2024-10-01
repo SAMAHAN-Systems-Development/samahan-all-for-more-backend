@@ -3,6 +3,7 @@ import { CreateEventDto } from './create-event.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupabaseService } from '../../supabase/supabase.service';
 import { isEmpty } from 'class-validator';
+import { UpdateEventDto } from './update-event.dto';
 
 @Injectable()
 export class EventService {
@@ -77,6 +78,120 @@ export class EventService {
 
       throw new HttpException(
         'An unexpected error occurred while creating the event',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async updateEvent(
+    id: number,
+    data: UpdateEventDto,
+    files: Express.Multer.File[],
+    delete_poster_ids?: number[],
+  ) {
+    try {
+      const event = await this.prismaService.event.findUnique({
+        where: {
+          id,
+          deleted_at: null,
+        },
+      });
+
+      if (!event) {
+        throw new HttpException(
+          `Event with id ${id} not found or has been deleted`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const {
+        name,
+        description,
+        registration_link,
+        start_time,
+        end_time,
+        location_id,
+      } = data;
+
+      const conflictingEvent = await this.prismaService.event.findFirst({
+        where: {
+          location_id,
+          start_time: new Date(start_time),
+          end_time: new Date(end_time),
+        },
+      });
+
+      if (conflictingEvent && conflictingEvent.id !== id) {
+        throw new HttpException(
+          'An event is already scheduled at this location at the same time',
+          HttpStatus.CONFLICT,
+        );
+      }
+
+      const updatedEvent = await this.prismaService.$transaction(
+        async (prisma) => {
+          const updated = await prisma.event.update({
+            where: { id },
+            data: {
+              name,
+              description,
+              registration_link,
+              start_time: new Date(start_time),
+              end_time: new Date(end_time),
+              location_id,
+            },
+          });
+
+          if (delete_poster_ids && !isEmpty(delete_poster_ids)) {
+            const existingPosters = await this.prismaService.poster.findMany({
+              where: {
+                id: { in: delete_poster_ids },
+                deleted_at: null,
+                event_id: id,
+              },
+            });
+
+            if (existingPosters.length !== delete_poster_ids.length) {
+              throw new HttpException(
+                'Some poster IDs are invalid or do not belong to this event',
+                HttpStatus.BAD_REQUEST,
+              );
+            }
+
+            await this.prismaService.poster.updateMany({
+              where: { id: { in: delete_poster_ids } },
+              data: { deleted_at: new Date() },
+            });
+          }
+
+          if (files && !isEmpty(files)) {
+            const fileUploadPromises = files.map(async (file) => {
+              const posterUrl = await this.supabaseService.uploadPosterToBucket(
+                file,
+              );
+              return prisma.poster.create({
+                data: {
+                  event_id: updated.id,
+                  image_url: posterUrl,
+                },
+              });
+            });
+
+            await Promise.all(fileUploadPromises);
+          }
+
+          const updatedPosters = await prisma.poster.findMany({
+            where: { event_id: updated.id, deleted_at: null },
+          });
+
+          return { updatedEvent: updated, updatedPosters };
+        },
+      );
+
+      return updatedEvent;
+    } catch (error) {
+      throw new HttpException(
+        'An unexpected error occurred while updating the event',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
