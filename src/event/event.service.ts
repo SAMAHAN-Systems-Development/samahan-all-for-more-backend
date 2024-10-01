@@ -104,9 +104,9 @@ export class EventService {
       if (data.start_time || data.end_time || data.location_id) {
         const conflictingEvent = await this.prismaService.event.findFirst({
           where: {
-            location_id: data.location_id ?? event.location_id,
-            start_time: new Date(data.start_time ?? event.start_time),
-            end_time: new Date(data.end_time ?? event.end_time),
+            location_id: data.location_id,
+            start_time: new Date(data.start_time),
+            end_time: new Date(data.end_time),
           },
         });
 
@@ -123,17 +123,12 @@ export class EventService {
           const updated = await prisma.event.update({
             where: { id },
             data: {
-              name: data.name || event.name,
-              description: data.description || event.description,
-              registration_link:
-                data.registration_link || event.registration_link,
-              start_time: data.start_time
-                ? new Date(data.start_time)
-                : event.start_time,
-              end_time: data.end_time
-                ? new Date(data.end_time)
-                : event.end_time,
-              location_id: data.location_id || event.location_id,
+              name: data.name,
+              description: data.description,
+              registration_link: data.registration_link,
+              start_time: new Date(data.start_time),
+              end_time: new Date(data.end_time),
+              location_id: data.location_id,
             },
           });
 
