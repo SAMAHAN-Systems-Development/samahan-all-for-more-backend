@@ -91,12 +91,15 @@ export class EventService {
   ) {
     try {
       const event = await this.prismaService.event.findUnique({
-        where: { id },
+        where: {
+          id,
+          deleted_at: null,
+        },
       });
 
       if (!event) {
         throw new HttpException(
-          `Event with id ${id} not found`,
+          `Event with id ${id} not found or has been deleted`,
           HttpStatus.NOT_FOUND,
         );
       }
