@@ -181,10 +181,6 @@ export class EventService {
 
       return updatedEvent;
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-
       throw new HttpException(
         'An unexpected error occurred while updating the event',
         HttpStatus.INTERNAL_SERVER_ERROR,
