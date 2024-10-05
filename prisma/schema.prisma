@@ -57,6 +57,7 @@ model Bulletin {
   title       String
   content     String
   author      String
+  published_at DateTime?
   created_at  DateTime  @default(now())
   updated_at  DateTime  @updatedAt
   deleted_at  DateTime?
