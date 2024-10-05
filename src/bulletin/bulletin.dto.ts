@@ -8,6 +8,7 @@ import {
   IsNumber,
   registerDecorator,
   ValidationOptions,
+  IsDate,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { IsCategoryIdExistsConstraint } from './bulletin.custom.decorator';
@@ -43,6 +44,12 @@ export class BulletinDTO {
   @IsString({ message: 'Author must be a string' })
   @IsNotEmpty({ message: 'Author is required' })
   author: string;
+
+  @IsNotEmpty({ message: 'Published date is required' })
+  @Type(() => Date)
+  @IsDate({ message: 'Published date must be a valid date' })
+  published_at: Date;
+
   @IsOptional()
   @IsArray({ message: 'Attachment IDs must be an array' })
   @ArrayNotEmpty({ message: 'Attachment IDs array must not be empty' })

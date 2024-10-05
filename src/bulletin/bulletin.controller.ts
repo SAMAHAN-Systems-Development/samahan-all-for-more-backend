@@ -68,17 +68,6 @@ export class BulletinController {
   ) {
     try {
       await this.bulletinService.createBulletin(addBulletinDto, pdfAttachments);
-      const message = [
-        'Bulletin created successfully',
-        createMessagePart(
-          pdfAttachments.length,
-          'Added',
-          'PDF attachment',
-          'PDF attachments',
-        ),
-      ]
-        .filter(Boolean)
-        .join(' ');
 
       return {
         statusCode: HttpStatus.CREATED,
