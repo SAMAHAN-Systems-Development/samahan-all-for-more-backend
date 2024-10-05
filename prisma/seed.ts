@@ -211,6 +211,7 @@ async function seedBulletins() {
     title: faker.lorem.sentence(),
     content: faker.lorem.paragraphs(3),
     author: faker.person.fullName(),
+    published_at: new Date(),
     created_at: new Date(),
     updated_at: new Date(),
     deleted_at: null,
