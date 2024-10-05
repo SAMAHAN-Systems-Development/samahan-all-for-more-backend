@@ -8,6 +8,7 @@ category_id: int, required
 title: string, required
 content: string, required
 author: string, required
+published_at: DateTime, required
 pdf_attachemnts: application/pdf[], optional
 ```
 
@@ -23,6 +24,7 @@ Request
    title: "something",
    content: "some content here",
    author: "John",
+   published_at: "2031-08-15T10:00:00Z"
    pdf_attachments: application/pdf[]
 }
 ```
@@ -82,6 +84,7 @@ title: string, required
 content: string, required
 author: string, required
 deleted_attachment_ids: number[], optional
+published_at: DateTime, required
 pdf_attachemnts: [application/pdf], optional
 ```
 
@@ -101,6 +104,7 @@ HTTP: `/api/bulletins/1`
       "title": "new title",
       "content": "new content here",
       "author": "John",
+      "publshed_at" : "2031-08-15T10:00:00Z",
       "deleted_attachemnts_ids": [56, 74, 75]
    },
    "attachments": {
@@ -121,6 +125,7 @@ Response
     "title": "new title",
     "content": "new content here",
     "author": "John",
+    "publshed_at" : "2031-08-15T10:00:00Z",
     "created_at": "2024-09-01T01:30:23.844Z",
     "updated_at": "2024-09-06T07:23:26.471Z",
     "deleted_at": null,
@@ -277,7 +282,7 @@ Success Response
 
 Sample Success Response
 
-```json 
+```json
 [
   {
       "id": 50,
