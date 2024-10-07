@@ -221,6 +221,7 @@ export class EventService {
       },
       include: {
         location: true,
+        posters: true,
       },
       orderBy: {
         start_time: 'asc',
