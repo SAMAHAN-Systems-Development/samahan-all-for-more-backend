@@ -228,6 +228,24 @@ Sample Success Response
       "created_at": "2024-09-20T00:50:26.353Z",
       "updated_at": "2024-09-20T00:50:26.353Z",
       "deleted_at": null,
+      "posters": [
+        {
+          "id": 4,
+          "event_id": 38,
+          "image_url": "https://loremflickr.com/640/480?lock=761323797348352",
+          "created_at": "2024-10-07T02:13:42.973Z",
+          "updated_at": "2024-10-07T02:13:42.973Z",
+          "deleted_at": null
+        },
+        {
+          "id": 7,
+          "event_id": 38,
+          "image_url": "https://picsum.photos/seed/FQZ3dNSm/640/480",
+          "created_at": "2024-10-07T02:13:42.974Z",
+          "updated_at": "2024-10-07T02:13:42.974Z",
+          "deleted_at": null
+        }
+      ]
       "location": {
         "id": 10,
         "name": "Ervin Valleys",
