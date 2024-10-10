@@ -1,9 +1,15 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateEventDto } from './create-event.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { SupabaseService } from '../../supabase/supabase.service';
 import { isEmpty } from 'class-validator';
 import { UpdateEventDto } from './update-event.dto';
+import { Event } from '@prisma/client';
 
 @Injectable()
 export class EventService {
@@ -11,6 +17,23 @@ export class EventService {
     private readonly prismaService: PrismaService,
     private readonly supabaseService: SupabaseService,
   ) {}
+
+  async findEventById(id: number): Promise<Event> {
+    const event = await this.prismaService.event.findUnique({
+      where: {
+        id,
+        deleted_at: null,
+      },
+      include: {
+        location: true,
+        posters: true,
+      },
+    });
+    if (!event) {
+      throw new NotFoundException(`Event with id ${id} not found`);
+    }
+    return event;
+  }
 
   async createEvent(data: CreateEventDto, files: Express.Multer.File[]) {
     const {

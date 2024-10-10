@@ -113,6 +113,11 @@ export class EventController {
     return this.eventService.findAllEvents(Number(page), Number(limit));
   }
 
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Event> {
+    return this.eventService.findEventById(id);
+  }
+
   @Delete(':id')
   @UseGuards(AuthGuard)
   async delete(@Param('id', ParseIntPipe) id: number) {
