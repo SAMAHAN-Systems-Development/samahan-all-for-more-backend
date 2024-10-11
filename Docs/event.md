@@ -288,3 +288,62 @@ Error Response:
   "message": "Event with id 28 not found"
 }
 ```
+
+
+
+## GET /api/events/{id}
+
+This endpoint retrieves a specific event by its unique ID.
+
+**Request:**
+```json
+{
+  "message": "Event retrieved successfully",
+  "data": {
+    "id": 1,
+    "location_id": 3,
+    "name": "Palaro 2024",
+    "description": "A grand event featuring sports competitions between different schools.",
+    "registration_link": "https://example.com/register",
+    "start_time": "2028-10-15T09:00:00Z",
+    "end_time": "2028-10-15T17:00:00Z",
+    "created_at": "2024-09-27T13:22:50.349Z",
+    "updated_at": "2024-09-27T14:54:43.924Z",
+    "deleted_at": null,
+    "posters": [
+      {
+        "id": 51,
+        "event_id": 1,
+        "image_url": "http://127.0.0.1:54321/storage/v1/object/public/posterImages/01-10-2024-20-20-03-image1.png",
+        "created_at": "2024-10-01T12:20:03.009Z",
+        "updated_at": "2024-10-01T12:20:03.009Z",
+        "deleted_at": null
+      }
+    ],
+    "location": {
+      "id": 3,
+      "name": "Main Gym",
+      "address": "123 School Lane",
+      "created_at": "2024-09-20T00:50:26.341Z",
+      "updated_at": "2024-09-20T00:50:26.341Z"
+    }
+  }
+}
+```
+
+**Sample Error Responses:**
+
+**404 Not Found (provided event id does not exist in the database)**
+```json
+{
+  "statusCode": 404,
+  "message": "Event with id 100 not found"
+}
+```
+**400 Bad Request (invalid id type)**
+```json
+{
+  "statusCode": 400,
+  "message": "Invalid ID type: ID must be a number"
+}
+```
