@@ -246,9 +246,7 @@ export class EventService {
         location: true,
         posters: true,
       },
-      orderBy: {
-        start_time: 'asc',
-      },
+      orderBy: [{ start_time: 'asc' }, { end_time: 'asc' }],
     });
 
     return {
