@@ -119,6 +119,7 @@ export class EventService {
     id: number,
     data: UpdateEventDto,
     files: Express.Multer.File[],
+    thumbnail: Express.Multer.File,
     delete_poster_ids?: number[],
   ) {
     try {
@@ -171,6 +172,9 @@ export class EventService {
               start_time: new Date(start_time),
               end_time: new Date(end_time),
               location_id,
+              thumbnail: thumbnail
+                ? await this.supabaseService.uploadPosterToBucket(thumbnail)
+                : event.thumbnail,
             },
           });
 
