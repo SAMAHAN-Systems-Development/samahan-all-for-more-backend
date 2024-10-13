@@ -35,7 +35,11 @@ export class EventService {
     return event;
   }
 
-  async createEvent(data: CreateEventDto, files: Express.Multer.File[]) {
+  async createEvent(
+    data: CreateEventDto,
+    thumbnail: Express.Multer.File,
+    files: Express.Multer.File[],
+  ) {
     const {
       name,
       description,
@@ -62,6 +66,10 @@ export class EventService {
       }
 
       const event = await this.prismaService.$transaction(async (prisma) => {
+        const thumbnailUrl = await this.supabaseService.uploadPosterToBucket(
+          thumbnail,
+        );
+
         const newEvent = await prisma.event.create({
           data: {
             name,
@@ -70,6 +78,7 @@ export class EventService {
             start_time: new Date(start_time),
             end_time: new Date(end_time),
             location_id,
+            thumbnail: thumbnailUrl,
           },
         });
 

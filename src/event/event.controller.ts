@@ -21,6 +21,7 @@ import { CreateEventDto } from './create-event.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Event } from '@prisma/client';
 import { UpdateEventDto } from './update-event.dto';
+import { isEmpty } from 'class-validator';
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
 
@@ -36,7 +37,7 @@ export class EventController {
   )
   @UseGuards(AuthGuard)
   @UseInterceptors(
-    FileFieldsInterceptor([{ name: 'poster_images' }], {
+    FileFieldsInterceptor([{ name: 'poster_images' }, { name: 'thumbnail' }], {
       fileFilter: (req, file, callback) => {
         if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
           return callback(
@@ -53,10 +54,26 @@ export class EventController {
   )
   async create(
     @Body() createEventDto: CreateEventDto,
-    @UploadedFiles() files: { poster_images?: Express.Multer.File[] },
+    @UploadedFiles()
+    files: {
+      thumbnail: Express.Multer.File[];
+      poster_images?: Express.Multer.File[];
+    },
   ) {
+    if (!files.thumbnail || isEmpty(files.thumbnail)) {
+      throw new BadRequestException('Thumbnail is required');
+    }
+
+    if (files.thumbnail.length > 1) {
+      throw new BadRequestException('Only one thumbnail is allowed');
+    }
+
     try {
-      await this.eventService.createEvent(createEventDto, files.poster_images);
+      await this.eventService.createEvent(
+        createEventDto,
+        files.thumbnail?.[0],
+        files.poster_images,
+      );
 
       return { message: 'Event created successfully' };
     } catch (error) {
