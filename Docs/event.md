@@ -252,6 +252,7 @@ Sample Success Response
       "created_at": "2024-09-20T00:50:26.353Z",
       "updated_at": "2024-09-20T00:50:26.353Z",
       "deleted_at": null,
+      "thumbnail": "http://127.0.0.1:54321/storage/v1/object/public/posterImages/01-10-2024-20-20-03-thumbnail1.png",
       "posters": [
         {
           "id": 4,
@@ -333,6 +334,7 @@ This endpoint retrieves a specific event by its unique ID.
     "created_at": "2024-09-27T13:22:50.349Z",
     "updated_at": "2024-09-27T14:54:43.924Z",
     "deleted_at": null,
+    "thumbnail": "http://127.0.0.1:54321/storage/v1/object/public/posterImages/01-10-2024-20-20-03-thumbnail1.png",
     "posters": [
       {
         "id": 51,
