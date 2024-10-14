@@ -160,6 +160,7 @@ async function seedEvents() {
       end_time: endTime,
       created_at: new Date(),
       updated_at: new Date(),
+      thumbnail: faker.image.url(),
     };
   });
 

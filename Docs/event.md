@@ -12,6 +12,7 @@ registration_link: string, required
 start_time: string, required
 end_time: string, required
 location_id: int, required
+thumbnail: image/jpeg, image/png, image/gif, required
 poster_images: image/jpeg, image/png, image/gif, optional
 ```
 
@@ -25,6 +26,7 @@ Sample Request:
   "start_time": "2028-10-15T09:00:00Z",
   "end_time": "2028-10-15T17:00:00Z",
   "location_id": 3,
+  "thumbnail": image/jpeg,
   "poster_images": image/jpeg[]
 }
 ```
@@ -70,6 +72,16 @@ Sample Error Responses:
 }
 ```
 
+**400 Bad Request (uploaded more than one thumbnail)**
+
+```json
+{
+  "message": "Only one thumbnail is allowed",
+  "error": "Bad Request",
+  "statusCode": 400
+}
+```
+
 ## PUT /api/events/{id}
 
 Request:
@@ -82,6 +94,7 @@ registration_link: string, optional
 start_time: string, optional
 end_time: string, optional
 location_id: int, optional
+thumbnail: image/jpeg, image/png, image/gif, required
 poster_images: image/jpeg, image/png, image/gif, optional
 delete_poster_ids: int[], optional
 ```
@@ -114,7 +127,8 @@ Sample Success Response:
     "end_time": "2028-10-15T17:00:00Z",
     "created_at": "2024-09-27T13:22:50.349Z",
     "updated_at": "2024-09-27T14:54:43.924Z",
-    "deleted_at": null
+    "deleted_at": null,
+    "thumbnail": "http://127.0.0.1:54321/storage/v1/object/public/posterImages/01-10-2024-20-20-03-thumbnail1.png"
   },
   "updatedPosters": [
     {
@@ -188,6 +202,16 @@ Sample Error Responses:
 }
 ```
 
+**400 Bad Request (uploaded more than one thumbnail)**
+
+```json
+{
+  "message": "Only one thumbnail is allowed",
+  "error": "Bad Request",
+  "statusCode": 400
+}
+```
+
 ## GET /api/events
 
 This endpoint retrieves a list of all events.
@@ -228,6 +252,7 @@ Sample Success Response
       "created_at": "2024-09-20T00:50:26.353Z",
       "updated_at": "2024-09-20T00:50:26.353Z",
       "deleted_at": null,
+      "thumbnail": "http://127.0.0.1:54321/storage/v1/object/public/posterImages/01-10-2024-20-20-03-thumbnail1.png",
       "posters": [
         {
           "id": 4,
@@ -289,13 +314,12 @@ Error Response:
 }
 ```
 
-
-
 ## GET /api/events/{id}
 
 This endpoint retrieves a specific event by its unique ID.
 
 **Request:**
+
 ```json
 {
   "message": "Event retrieved successfully",
@@ -310,6 +334,7 @@ This endpoint retrieves a specific event by its unique ID.
     "created_at": "2024-09-27T13:22:50.349Z",
     "updated_at": "2024-09-27T14:54:43.924Z",
     "deleted_at": null,
+    "thumbnail": "http://127.0.0.1:54321/storage/v1/object/public/posterImages/01-10-2024-20-20-03-thumbnail1.png",
     "posters": [
       {
         "id": 51,
@@ -334,13 +359,16 @@ This endpoint retrieves a specific event by its unique ID.
 **Sample Error Responses:**
 
 **404 Not Found (provided event id does not exist in the database)**
+
 ```json
 {
   "statusCode": 404,
   "message": "Event with id 100 not found"
 }
 ```
+
 **400 Bad Request (invalid id type)**
+
 ```json
 {
   "statusCode": 400,
