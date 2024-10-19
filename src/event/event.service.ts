@@ -10,6 +10,8 @@ import { SupabaseService } from '../../supabase/supabase.service';
 import { isEmpty } from 'class-validator';
 import { UpdateEventDto } from './update-event.dto';
 import { Event } from '@prisma/client';
+import { GetEventsDto } from './getEvent.dto';
+import { EventStatus } from '../enums/event-status';
 
 @Injectable()
 export class EventService {
@@ -233,28 +235,41 @@ export class EventService {
     }
   }
 
-  async findAllEvents(page: number, limit: number) {
+  async findAllEvents(getEventsDto: GetEventsDto) {
+    const { page = 1, limit = 10, search, status } = getEventsDto;
     const skip = (page - 1) * limit;
     const currentDate = new Date();
 
-    const totalEvents = await this.prismaService.event.count({
-      where: {
-        deleted_at: null,
-        start_time: {
-          gte: currentDate,
-        },
-      },
-    });
+    const where: any = {
+      deleted_at: null,
+      ...(search && {
+        OR: [
+          { name: { contains: search, mode: 'insensitive' } },
+          { description: { contains: search, mode: 'insensitive' } },
+          { location: { name: { contains: search, mode: 'insensitive' } } },
+        ],
+      }),
+    };
+
+    if (status && status !== EventStatus.All) {
+      switch (status) {
+        case EventStatus.Ongoing:
+          where.start_time = { lte: currentDate };
+          where.end_time = { gte: currentDate };
+          break;
+        case EventStatus.Past:
+          where.end_time = { lt: currentDate };
+          break;
+        case EventStatus.Upcoming:
+          where.start_time = { gt: currentDate };
+          break;
+      }
+    }
 
     const events = await this.prismaService.event.findMany({
       skip: skip,
       take: limit,
-      where: {
-        deleted_at: null,
-        start_time: {
-          gte: currentDate,
-        },
-      },
+      where,
       include: {
         location: true,
         posters: true,
@@ -262,12 +277,7 @@ export class EventService {
       orderBy: [{ start_time: 'asc' }, { end_time: 'asc' }],
     });
 
-    return {
-      data: events,
-      totalEvents,
-      currentPage: page,
-      totalPages: Math.ceil(totalEvents / limit),
-    };
+    return events;
   }
 
   async deleteEvent(id: number) {
@@ -306,4 +316,16 @@ export class EventService {
       throw new Error(`Failed to delete event id ${id}: ${error.message}`);
     }
   }
+
+  isOngoingEvent = (event: any, currentDate: Date): boolean => {
+    return event.start_time <= currentDate && event.end_time >= currentDate;
+  };
+
+  isPastEvent = (event: any, currentDate: Date): boolean => {
+    return event.end_time < currentDate;
+  };
+
+  isUpcomingEvent = (event: any, currentDate: Date): boolean => {
+    return event.start_time > currentDate;
+  };
 }

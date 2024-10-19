@@ -26,6 +26,7 @@ import { ValidateNotSoftDeletePipe } from './bulleting.custom.pipe';
 import { createMessagePart, isEmpty } from '../utils/utils';
 import { Bulletin } from '@prisma/client';
 import { DeleteBulletinDTO } from './deleteBulletin.dto';
+import { GetBulletinDto } from './getBulletin.dto';
 
 @Controller('/bulletins')
 @UseGuards(AuthGuard)
@@ -34,10 +35,9 @@ export class BulletinController {
 
   @Get()
   async getAllBulletins(
-    @Query() query: { page: number; limit?: number },
+    @Query() getBulletinDto: GetBulletinDto,
   ): Promise<Bulletin[]> {
-    const { page = 1, limit = 10 } = query;
-    return this.bulletinService.getAllBulletins(Number(page), Number(limit));
+    return this.bulletinService.getAllBulletins(getBulletinDto);
   }
 
   @Post()

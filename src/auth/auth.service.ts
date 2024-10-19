@@ -1,31 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { LoginDto } from './auth.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { Response as Res } from 'express';
+import { SupabaseService } from 'supabase/supabase.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prismaService: PrismaService,
     private jwtService: JwtService,
+    private supabaseService: SupabaseService,
   ) {}
 
   async login(loginDto: LoginDto, res: Res) {
-    const { supabaseUserId } = loginDto;
+    const { email, password } = loginDto;
 
-    const { email, userType } = await this.getUserInfoBySupabaseUserId(
-      supabaseUserId,
-    );
-    const payload = { username: email, supabaseUserId: supabaseUserId };
-    const accessToken = this.jwtService.sign(payload);
+    const supabaseUser = await this.supabaseService.signInSupabaseUser({
+      email,
+      password,
+    });
+
+    const accessToken = supabaseUser.session.access_token;
 
     const returnValue = res
       .set({
         'x-access-token': accessToken,
         'Access-Control-Expose-Headers': 'x-access-token',
       })
-      .json({ email, userType });
+      .json({ email });
     return returnValue;
   }
 

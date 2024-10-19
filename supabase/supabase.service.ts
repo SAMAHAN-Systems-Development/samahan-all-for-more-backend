@@ -1,8 +1,9 @@
 // supabase.service.ts
 
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { generateUniqueFileName } from '../src/utils/datefns';
+import { LoginDto } from 'src/auth/auth.dto';
 @Injectable()
 export class SupabaseService {
   private supabase: SupabaseClient;
@@ -14,6 +15,43 @@ export class SupabaseService {
 
   getSupabase() {
     return this.supabase;
+  }
+
+  async signInSupabaseUser(loginData: LoginDto): Promise<any> {
+    const { email, password } = loginData;
+    const { data, error } = await this.supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      throw new HttpException(
+        'Invalid email or password',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    return data;
+  }
+
+  async signOutSupabaseUser() {
+    const { error } = await this.supabase.auth.signOut();
+    if (error) {
+      throw new HttpException(
+        'Failed to sign out',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async getCurrentUser() {
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
+    if (!user) {
+      throw new HttpException('Invalid Credentials', HttpStatus.FORBIDDEN);
+    }
+    return user;
   }
 
   async createSupabaseUser(email: string, password: string): Promise<any> {

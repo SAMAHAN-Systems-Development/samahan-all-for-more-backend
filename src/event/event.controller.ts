@@ -21,6 +21,7 @@ import { CreateEventDto } from './create-event.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Event } from '@prisma/client';
 import { UpdateEventDto } from './update-event.dto';
+import { GetEventsDto } from './getEvent.dto';
 import { isEmpty } from 'class-validator';
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
@@ -132,11 +133,8 @@ export class EventController {
   }
 
   @Get()
-  async findAll(
-    @Query() query: { page: number; limit?: number },
-  ): Promise<{ data: Event[] }> {
-    const { page = 1, limit = 10 } = query;
-    return this.eventService.findAllEvents(Number(page), Number(limit));
+  async findAll(@Query() getEventsDto: GetEventsDto): Promise<Event[]> {
+    return this.eventService.findAllEvents(getEventsDto);
   }
 
   @Get(':id')

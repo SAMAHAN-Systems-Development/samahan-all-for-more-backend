@@ -1,3 +1,4 @@
 export class LoginDto {
-  supabaseUserId: string;
+  email: string;
+  password: string;
 }
