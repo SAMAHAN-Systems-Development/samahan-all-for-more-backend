@@ -39,6 +39,7 @@ model Event {
   deleted_at       DateTime?
   location         Location @relation(fields: [location_id], references: [id])
   posters          Poster[]
+  thumbnail        String
 }
 
 model Poster {

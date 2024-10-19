@@ -37,7 +37,11 @@ export class EventService {
     return event;
   }
 
-  async createEvent(data: CreateEventDto, files: Express.Multer.File[]) {
+  async createEvent(
+    data: CreateEventDto,
+    thumbnail: Express.Multer.File,
+    files: Express.Multer.File[],
+  ) {
     const {
       name,
       description,
@@ -64,6 +68,10 @@ export class EventService {
       }
 
       const event = await this.prismaService.$transaction(async (prisma) => {
+        const thumbnailUrl = await this.supabaseService.uploadPosterToBucket(
+          thumbnail,
+        );
+
         const newEvent = await prisma.event.create({
           data: {
             name,
@@ -72,6 +80,7 @@ export class EventService {
             start_time: new Date(start_time),
             end_time: new Date(end_time),
             location_id,
+            thumbnail: thumbnailUrl,
           },
         });
 
@@ -112,6 +121,7 @@ export class EventService {
     id: number,
     data: UpdateEventDto,
     files: Express.Multer.File[],
+    thumbnail: Express.Multer.File,
     delete_poster_ids?: number[],
   ) {
     try {
@@ -164,6 +174,9 @@ export class EventService {
               start_time: new Date(start_time),
               end_time: new Date(end_time),
               location_id,
+              thumbnail: thumbnail
+                ? await this.supabaseService.uploadPosterToBucket(thumbnail)
+                : event.thumbnail,
             },
           });
 
@@ -261,9 +274,7 @@ export class EventService {
         location: true,
         posters: true,
       },
-      orderBy: {
-        start_time: 'asc',
-      },
+      orderBy: [{ start_time: 'asc' }, { end_time: 'asc' }],
     });
 
     return events;
