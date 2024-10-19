@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { SupabaseService } from '../../supabase/supabase.service';
 import { BulletinDTO } from './bulletin.dto';
 import { isEmpty } from '../utils/utils';
+import { GetBulletinDto } from './getBulletin.dto';
 
 @Injectable()
 export class BulletinService {
@@ -11,13 +12,30 @@ export class BulletinService {
     private readonly supabaseService: SupabaseService,
   ) {}
 
-  async getAllBulletins(page: number, limit: number) {
+  async getAllBulletins(GetBulletinDto: GetBulletinDto) {
+    const {
+      page = 1,
+      limit = 10,
+      type = undefined,
+      search = undefined,
+    } = GetBulletinDto;
     const skip = (page - 1) * limit;
     return this.prismaService.bulletin.findMany({
       skip,
       take: limit,
       where: {
         deleted_at: null,
+        ...(type &&
+          type !== 'All' && {
+            category: { name: { contains: type, mode: 'insensitive' } },
+          }),
+        ...(search && {
+          OR: [
+            { title: { contains: search, mode: 'insensitive' } },
+            { author: { contains: search, mode: 'insensitive' } },
+            { category: { name: { contains: search, mode: 'insensitive' } } },
+          ],
+        }),
       },
       orderBy: {
         created_at: 'desc',
