@@ -267,6 +267,8 @@ Path: /api/bulletins
 Query Parameters:
 - Page: The current page number. Default is 1
 - Limit: The maximum number of items to return per page. Default is 10
+- Type: Filter bulletins by category name (case insensitive). Optional.
+- Search: Search for bulletins by title, author, or category name (case insensitive). Optional.
 ```
 
 Example Requests
@@ -274,6 +276,7 @@ Example Requests
 GET /api/bulletins
 GET /api/bulletins?page=2
 GET /api/bulletins?page=2&limit=15
+GET /api/bulletins?search=Stella
 ```
 
 Success Response

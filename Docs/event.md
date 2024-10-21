@@ -220,8 +220,10 @@ This endpoint retrieves a list of all events.
 Method: GET
 Path: /api/events
 Query Parameters:
-- Page: The current page number. Default is 1
-- Limit: The maximum number of items to return per page. Default is 10
+- Page (optional): The current page number. Default is 1.
+- Limit (optional): The maximum number of items to return per page. Default is 10.
+- Search (optional): A string to search event names or descriptions.
+- Status (optional): The event status (Ongoing, Past, Upcoming)
 ```
 
 Example Requests
@@ -230,6 +232,7 @@ Example Requests
 GET /api/events
 GET /api/events?page=2
 GET /api/events?page=2&limit=15
+GET /api/events?status=Upcoming
 ```
 
 Success Response
