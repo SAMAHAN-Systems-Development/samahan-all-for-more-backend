@@ -33,7 +33,19 @@ export class CategoryService {
   }
 
   async findAllCategories() {
-    return this.prisma.category.findMany();
+    return this.prisma.category.findMany({
+      include: {
+        bulletins: {
+          include: {
+            pdfAttachments: {
+              where: {
+                deleted_at: null,
+              },
+            },
+          },
+        },
+      },
+    });
   }
 
   async updateCategory(id: number, data: UpdateCategoryDto) {
