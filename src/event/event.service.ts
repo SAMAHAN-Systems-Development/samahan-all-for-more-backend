@@ -267,8 +267,8 @@ export class EventService {
     }
 
     const events = await this.prismaService.event.findMany({
-      skip: skip,
-      take: limit,
+      skip: Number(skip),
+      take: Number(limit),
       where,
       include: {
         location: true,
