@@ -228,7 +228,7 @@ async function uploadPDF(filePath: string, fileName: string) {
     );
   }
 
-  const pdfBucketName = process.env.STORAGE_BUCKET; // Ensure this is the correct bucket for PDFs
+  const pdfBucketName = process.env.STORAGE_BUCKET;
   const fileData = fs.readFileSync(filePath);
 
   // Upload the file to Supabase storage
@@ -252,19 +252,18 @@ async function uploadPDF(filePath: string, fileName: string) {
 
 async function seedPosters() {
   const events = await prisma.event.findMany();
-  const imageBucketName = process.env.POSTER_IMAGE_BUCKET; // Make sure you get the bucket name
+  const imageBucketName = process.env.POSTER_IMAGE_BUCKET;
 
   const posters = await Promise.all(
     samplePosters.map(async (filePath, index) => {
       const fileName = path.basename(filePath);
-      const fileUrl = await uploadPoster(filePath, fileName);
+      const fileUrl = await uploadPoster(filePath, fileName); // Do not remove
 
-      // Construct the full URL for the image based on the Supabase structure
       const fullImageUrl = `https://${process.env.SUPABASE_URL}/storage/v1/object/public/${imageBucketName}/${fileName}`;
 
       return {
         event_id: events[index % events.length].id,
-        image_url: fullImageUrl, // Use the constructed URL here
+        image_url: fullImageUrl,
         created_at: new Date(),
         updated_at: new Date(),
         deleted_at: null,
@@ -276,44 +275,70 @@ async function seedPosters() {
 }
 
 async function seedCategories() {
-  const uniqueNames = new Set<string>();
   const categories: {
     name: string;
     description: string;
     created_at: Date;
     updated_at: Date;
-  }[] = [];
-
-  while (uniqueNames.size < 10) {
-    const name = faker.commerce.department();
-    if (!uniqueNames.has(name)) {
-      uniqueNames.add(name);
-      categories.push({
-        name,
-        description: faker.lorem.sentence(),
-        created_at: new Date(),
-        updated_at: new Date(),
-      });
-    }
-  }
+  }[] = [
+    {
+      name: 'Bills',
+      description: faker.lorem.sentence(),
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      name: 'Memorandums',
+      description: faker.lorem.sentence(),
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      name: 'Resolutions',
+      description: faker.lorem.sentence(),
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+  ];
 
   await prisma.category.createMany({ data: categories });
 }
 
 async function seedBulletins() {
+  const bulletinTitles = [
+    'A Resolution Creating an Ad Hoc Committee to Convene the Members of the SAMAHAN Student Court',
+    'A Resolution Adopting the Magna Carta for Students’ Rights and Welfare and Endorsement to the Office of Student Affairs',
+    'A Resolution Confirming the Appointment of Nikko Paul Izack Maghuyop as the Department Director of the SAMAHAN Sponsorship and Support',
+    "A Resolution Confirming the Appointment of French Bayer Bandong as the Head Commissioner of Commission on Students' Rights and Welfare",
+    'A Resolution Confirming the Appointment of Justin James Carreon as the Department Director of the SAMAHAN Creative Team',
+    'A Resolution Confirming the Appointment of Ken Ryle Hinojales as the Department Director of Ateneo SAMAHAN Productions',
+    'A Resolution Confirming the Appointment of Alessandra Marie Leyma as the Department Director of the Department of Academic Affairs',
+    'A Resolution Confirming the Appointment of Jewel Batoon as the Department Director of the Department of Campaigns and Advocacies',
+    'A Resolution Confirming the Appointment of Rustom Olaso as the Department Director of the SAMAHAN Communications',
+    'A Resolution Confirming the Appointment of Krisha Faye Barot as the Department Director of the Department of External Affairs',
+    'A Resolution Confirming the Appointment of Ralph Rainier Abarca as the Department Director of the SAMAHAN Logistics Department',
+    'A Resolution Confirming the Appointment of Aibor Kennen Denila as the Department Director of the SAMAHAN Research and Development',
+    'A Resolution Confirming the Appointment of Mary Jastine Lapating as the Department Director of the Ecotoneo Student Unit',
+    'A Resolution Confirming the Appointment of Alex Dave Escalante as the Department Director of the Department of Disaster Risk Reduction and Management',
+    'A Resolution Confirming the Appointment of Francis Rhaey Casas as the Department Director for the SAMAHAN Systems Development',
+    'A Resolution Confirming the Appointment of Jan A.G. Adrian Lariego as the Head Commissioner of Commission on Audit',
+    'A Resolution Endorsing the Cluster Participation Incentive Mechanism for Students in the Natural Sciences and Mathematics Cluster',
+    'A Resolution Urging the Ateneo de Davao University Committee on Anti-Sexual Harassment that in Combating Sexual Harassment - to Strengthen Reporting Mechanisms and Support Systems for Ateneo de Davao University Students',
+    'A Resolution Urging the Student Executive Councils (SECs) of the Ateneo de Davao University to Strengthen their Student Judicial Court Application Campaign and Modifying Applicant Qualifications',
+  ];
+
   const categories = await prisma.category.findMany();
-  const bulletins = Array.from({ length: 50 }).map(() => ({
+
+  const bulletins = bulletinTitles.map((title) => ({
+    title,
+    content: faker.lorem.paragraphs(2),
     category_id: faker.helpers.arrayElement(categories).id,
-    title: faker.lorem.sentence(),
-    content: faker.lorem.paragraphs(3),
-    author: faker.person.fullName(),
-    published_at: new Date(),
+    author: faker.name.fullName(),
     created_at: new Date(),
     updated_at: new Date(),
-    deleted_at: null,
   }));
 
-  await prisma.bulletin.createMany({ data: bulletins });
+  await prisma.bulletin.createMany({ data: bulletins as any });
 }
 
 async function seedPDFAttachments() {
