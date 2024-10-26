@@ -1,9 +1,21 @@
 import { PrismaService } from '../src/prisma/prisma.service';
 import { SupabaseService } from '../supabase/supabase.service';
 import { faker } from '@faker-js/faker';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as mime from 'mime-types';
+import { Bulletin } from '@prisma/client';
 
 const prisma = new PrismaService();
 const supabase = new SupabaseService();
+
+const samplePosters = fs
+  .readdirSync(path.resolve(__dirname, '../seed_files/posters'))
+  .map((file) => path.resolve(__dirname, '../seed_files/posters', file));
+
+const samplePDFs = fs
+  .readdirSync(path.resolve(__dirname, '../seed_files/pdfs'))
+  .map((file) => path.resolve(__dirname, '../seed_files/pdfs', file));
 
 async function createImageBucketIfNotExists() {
   try {
@@ -26,7 +38,13 @@ async function createImageBucketIfNotExists() {
         .getSupabase()
         .storage.createBucket(imageBucketName, {
           public: false,
-          allowedMimeTypes: ['image/jpeg', 'image/png', 'image/gif'],
+          allowedMimeTypes: [
+            'image/jpeg',
+            'image/png',
+            'image/gif',
+            'image/jpg',
+            'image/pjpeg',
+          ],
         });
 
       if (error) {
@@ -167,54 +185,159 @@ async function seedEvents() {
   await prisma.event.createMany({ data: events });
 }
 
+async function uploadPoster(filePath: string, fileName: string) {
+  const fileData = fs.readFileSync(filePath);
+  const mimeType = mime.lookup(filePath);
+
+  if (
+    !mimeType ||
+    ![
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'image/jpg',
+      'image/pjpeg',
+    ].includes(mimeType)
+  ) {
+    throw new Error(
+      `Unsupported MIME type for file '${fileName}': ${mimeType}`,
+    );
+  }
+
+  const { data, error } = await supabase
+    .getSupabase()
+    .storage.from(process.env.POSTER_IMAGE_BUCKET)
+    .upload(fileName, fileData, {
+      cacheControl: '3600',
+      upsert: true,
+      contentType: mimeType,
+    });
+
+  if (error) {
+    throw new Error(`Failed to upload file '${fileName}': ${error.message}`);
+  }
+
+  return data.path;
+}
+
+async function uploadPDF(filePath: string, fileName: string) {
+  const mimeType = mime.lookup(filePath);
+
+  if (mimeType !== 'application/pdf') {
+    throw new Error(
+      `Unsupported MIME type for file '${fileName}': ${mimeType}`,
+    );
+  }
+
+  const pdfBucketName = process.env.STORAGE_BUCKET;
+  const fileData = fs.readFileSync(filePath);
+
+  // Upload the file to Supabase storage
+  const { error } = await supabase
+    .getSupabase()
+    .storage.from(pdfBucketName)
+    .upload(fileName, fileData, {
+      cacheControl: '3600',
+      upsert: true,
+      contentType: mimeType,
+    });
+
+  if (error) {
+    throw new Error(`Failed to upload PDF '${fileName}': ${error.message}`);
+  }
+
+  const fullPdfUrl = `https://${process.env.SUPABASE_URL}/storage/v1/object/public/${pdfBucketName}/${fileName}`;
+
+  return fullPdfUrl;
+}
+
 async function seedPosters() {
   const events = await prisma.event.findMany();
-  const posters = Array.from({ length: 50 }).map(() => ({
-    event_id: faker.helpers.arrayElement(events).id,
-    image_url: faker.image.url(),
-    created_at: new Date(),
-    updated_at: new Date(),
-    deleted_at: null,
-  }));
+  const imageBucketName = process.env.POSTER_IMAGE_BUCKET;
+
+  const posters = await Promise.all(
+    samplePosters.map(async (filePath, index) => {
+      const fileName = path.basename(filePath);
+      const fileUrl = await uploadPoster(filePath, fileName); // Do not remove
+
+      const fullImageUrl = `https://${process.env.SUPABASE_URL}/storage/v1/object/public/${imageBucketName}/${fileName}`;
+
+      return {
+        event_id: events[index % events.length].id,
+        image_url: fullImageUrl,
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+      };
+    }),
+  );
 
   await prisma.poster.createMany({ data: posters });
 }
 
 async function seedCategories() {
-  const uniqueNames = new Set<string>();
   const categories: {
     name: string;
     description: string;
     created_at: Date;
     updated_at: Date;
-  }[] = [];
-
-  while (uniqueNames.size < 10) {
-    const name = faker.commerce.department();
-    if (!uniqueNames.has(name)) {
-      uniqueNames.add(name);
-      categories.push({
-        name,
-        description: faker.lorem.sentence(),
-        created_at: new Date(),
-        updated_at: new Date(),
-      });
-    }
-  }
+  }[] = [
+    {
+      name: 'Bills',
+      description: faker.lorem.sentence(),
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      name: 'Memorandums',
+      description: faker.lorem.sentence(),
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      name: 'Resolutions',
+      description: faker.lorem.sentence(),
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+  ];
 
   await prisma.category.createMany({ data: categories });
 }
 
 async function seedBulletins() {
+  const bulletinTitles = [
+    'A Resolution Creating an Ad Hoc Committee to Convene the Members of the SAMAHAN Student Court',
+    'A Resolution Adopting the Magna Carta for Students’ Rights and Welfare and Endorsement to the Office of Student Affairs',
+    'A Resolution Confirming the Appointment of Nikko Paul Izack Maghuyop as the Department Director of the SAMAHAN Sponsorship and Support',
+    "A Resolution Confirming the Appointment of French Bayer Bandong as the Head Commissioner of Commission on Students' Rights and Welfare",
+    'A Resolution Confirming the Appointment of Justin James Carreon as the Department Director of the SAMAHAN Creative Team',
+    'A Resolution Confirming the Appointment of Ken Ryle Hinojales as the Department Director of Ateneo SAMAHAN Productions',
+    'A Resolution Confirming the Appointment of Alessandra Marie Leyma as the Department Director of the Department of Academic Affairs',
+    'A Resolution Confirming the Appointment of Jewel Batoon as the Department Director of the Department of Campaigns and Advocacies',
+    'A Resolution Confirming the Appointment of Rustom Olaso as the Department Director of the SAMAHAN Communications',
+    'A Resolution Confirming the Appointment of Krisha Faye Barot as the Department Director of the Department of External Affairs',
+    'A Resolution Confirming the Appointment of Ralph Rainier Abarca as the Department Director of the SAMAHAN Logistics Department',
+    'A Resolution Confirming the Appointment of Aibor Kennen Denila as the Department Director of the SAMAHAN Research and Development',
+    'A Resolution Confirming the Appointment of Mary Jastine Lapating as the Department Director of the Ecotoneo Student Unit',
+    'A Resolution Confirming the Appointment of Alex Dave Escalante as the Department Director of the Department of Disaster Risk Reduction and Management',
+    'A Resolution Confirming the Appointment of Francis Rhaey Casas as the Department Director for the SAMAHAN Systems Development',
+    'A Resolution Confirming the Appointment of Jan A.G. Adrian Lariego as the Head Commissioner of Commission on Audit',
+    'A Resolution Endorsing the Cluster Participation Incentive Mechanism for Students in the Natural Sciences and Mathematics Cluster',
+    'A Resolution Urging the Ateneo de Davao University Committee on Anti-Sexual Harassment that in Combating Sexual Harassment - to Strengthen Reporting Mechanisms and Support Systems for Ateneo de Davao University Students',
+    'A Resolution Urging the Student Executive Councils (SECs) of the Ateneo de Davao University to Strengthen their Student Judicial Court Application Campaign and Modifying Applicant Qualifications',
+  ];
+
   const categories = await prisma.category.findMany();
-  const bulletins = Array.from({ length: 50 }).map(() => ({
+
+  const bulletins: Omit<Bulletin, 'id'>[] = bulletinTitles.map((title) => ({
+    title,
+    content: faker.lorem.paragraphs(2),
     category_id: faker.helpers.arrayElement(categories).id,
-    title: faker.lorem.sentence(),
-    content: faker.lorem.paragraphs(3),
-    author: faker.person.fullName(),
-    published_at: new Date(),
+    author: faker.name.fullName(),
     created_at: new Date(),
     updated_at: new Date(),
+    published_at: new Date(),
     deleted_at: null,
   }));
 
@@ -223,13 +346,21 @@ async function seedBulletins() {
 
 async function seedPDFAttachments() {
   const bulletins = await prisma.bulletin.findMany();
-  const pdfAttachments = Array.from({ length: 50 }).map(() => ({
-    bulletin_id: faker.helpers.arrayElement(bulletins).id,
-    file_path: faker.system.filePath(),
-    created_at: new Date(),
-    updated_at: new Date(),
-    deleted_at: null,
-  }));
+
+  const pdfAttachments = await Promise.all(
+    samplePDFs.map(async (filePath, index) => {
+      const fileName = path.basename(filePath);
+      const fileUrl = await uploadPDF(filePath, fileName);
+
+      return {
+        bulletin_id: bulletins[index % bulletins.length].id,
+        file_path: fileUrl,
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+      };
+    }),
+  );
 
   await prisma.pDFAttachment.createMany({ data: pdfAttachments });
 }
@@ -237,13 +368,13 @@ async function seedPDFAttachments() {
 async function main() {
   await createImageBucketIfNotExists();
   await createBucketIfNotExists();
-  await seedUsers();
   await seedLocations();
   await seedEvents();
   await seedPosters();
   await seedCategories();
   await seedBulletins();
   await seedPDFAttachments();
+  await seedUsers();
 }
 
 main()
