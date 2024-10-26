@@ -21,15 +21,20 @@ export class AuthService {
       password,
     });
 
+    if (!supabaseUser || !supabaseUser.session) {
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+    }
+
     const accessToken = supabaseUser.session.access_token;
 
-    const returnValue = res
-      .set({
-        'x-access-token': accessToken,
-        'Access-Control-Expose-Headers': 'x-access-token',
-      })
-      .json({ email });
-    return returnValue;
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 3600000,
+      sameSite: 'lax',
+    });
+
+    return;
   }
 
   async getUserInfoBySupabaseUserId(

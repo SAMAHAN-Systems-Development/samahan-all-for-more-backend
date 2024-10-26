@@ -1,4 +1,11 @@
-import { Controller, Post, Body, Response, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Response,
+  Get,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './auth.dto';
 import { Response as Res } from 'express';
@@ -11,10 +18,16 @@ export class AuthController {
     private readonly supabaseService: SupabaseService,
   ) {}
 
-  @Post('login') // Use POST method for handling login
+  @Post('login')
   async login(@Body() loginDto: LoginDto, @Response() res: Res) {
-    const result = await this.authService.login(loginDto, res);
-    return result;
+    try {
+      await this.authService.login(loginDto, res);
+      return res.status(HttpStatus.OK).json({ message: 'Login successful' });
+    } catch (error) {
+      return res
+        .status(HttpStatus.UNAUTHORIZED)
+        .json({ message: error.message || 'Invalid credentials' });
+    }
   }
 
   @Get('user')
