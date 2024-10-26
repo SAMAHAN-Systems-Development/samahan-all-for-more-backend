@@ -1,9 +1,20 @@
 import { PrismaService } from '../src/prisma/prisma.service';
 import { SupabaseService } from '../supabase/supabase.service';
 import { faker } from '@faker-js/faker';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as mime from 'mime-types';
 
 const prisma = new PrismaService();
 const supabase = new SupabaseService();
+
+const samplePosters = fs
+  .readdirSync(path.resolve(__dirname, '../seed_files/posters'))
+  .map((file) => path.resolve(__dirname, '../seed_files/posters', file));
+
+const samplePDFs = fs
+  .readdirSync(path.resolve(__dirname, '../seed_files/pdfs'))
+  .map((file) => path.resolve(__dirname, '../seed_files/pdfs', file));
 
 async function createImageBucketIfNotExists() {
   try {
@@ -26,7 +37,13 @@ async function createImageBucketIfNotExists() {
         .getSupabase()
         .storage.createBucket(imageBucketName, {
           public: false,
-          allowedMimeTypes: ['image/jpeg', 'image/png', 'image/gif'],
+          allowedMimeTypes: [
+            'image/jpeg',
+            'image/png',
+            'image/gif',
+            'image/jpg',
+            'image/pjpeg',
+          ],
         });
 
       if (error) {
@@ -167,15 +184,93 @@ async function seedEvents() {
   await prisma.event.createMany({ data: events });
 }
 
+async function uploadPoster(filePath: string, fileName: string) {
+  const fileData = fs.readFileSync(filePath);
+  const mimeType = mime.lookup(filePath);
+
+  if (
+    !mimeType ||
+    ![
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'image/jpg',
+      'image/pjpeg',
+    ].includes(mimeType)
+  ) {
+    throw new Error(
+      `Unsupported MIME type for file '${fileName}': ${mimeType}`,
+    );
+  }
+
+  const { data, error } = await supabase
+    .getSupabase()
+    .storage.from(process.env.POSTER_IMAGE_BUCKET)
+    .upload(fileName, fileData, {
+      cacheControl: '3600',
+      upsert: true,
+      contentType: mimeType,
+    });
+
+  if (error) {
+    throw new Error(`Failed to upload file '${fileName}': ${error.message}`);
+  }
+
+  return data.path;
+}
+
+async function uploadPDF(filePath: string, fileName: string) {
+  const mimeType = mime.lookup(filePath);
+
+  if (mimeType !== 'application/pdf') {
+    throw new Error(
+      `Unsupported MIME type for file '${fileName}': ${mimeType}`,
+    );
+  }
+
+  const pdfBucketName = process.env.STORAGE_BUCKET; // Ensure this is the correct bucket for PDFs
+  const fileData = fs.readFileSync(filePath);
+
+  // Upload the file to Supabase storage
+  const { error } = await supabase
+    .getSupabase()
+    .storage.from(pdfBucketName)
+    .upload(fileName, fileData, {
+      cacheControl: '3600',
+      upsert: true,
+      contentType: mimeType,
+    });
+
+  if (error) {
+    throw new Error(`Failed to upload PDF '${fileName}': ${error.message}`);
+  }
+
+  const fullPdfUrl = `https://${process.env.SUPABASE_URL}/storage/v1/object/public/${pdfBucketName}/${fileName}`;
+
+  return fullPdfUrl;
+}
+
 async function seedPosters() {
   const events = await prisma.event.findMany();
-  const posters = Array.from({ length: 50 }).map(() => ({
-    event_id: faker.helpers.arrayElement(events).id,
-    image_url: faker.image.url(),
-    created_at: new Date(),
-    updated_at: new Date(),
-    deleted_at: null,
-  }));
+  const imageBucketName = process.env.POSTER_IMAGE_BUCKET; // Make sure you get the bucket name
+
+  const posters = await Promise.all(
+    samplePosters.map(async (filePath, index) => {
+      const fileName = path.basename(filePath);
+      const fileUrl = await uploadPoster(filePath, fileName);
+
+      // Construct the full URL for the image based on the Supabase structure
+      const fullImageUrl = `https://${process.env.SUPABASE_URL}/storage/v1/object/public/${imageBucketName}/${fileName}`;
+
+      return {
+        event_id: events[index % events.length].id,
+        image_url: fullImageUrl, // Use the constructed URL here
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+      };
+    }),
+  );
 
   await prisma.poster.createMany({ data: posters });
 }
@@ -223,13 +318,21 @@ async function seedBulletins() {
 
 async function seedPDFAttachments() {
   const bulletins = await prisma.bulletin.findMany();
-  const pdfAttachments = Array.from({ length: 50 }).map(() => ({
-    bulletin_id: faker.helpers.arrayElement(bulletins).id,
-    file_path: faker.system.filePath(),
-    created_at: new Date(),
-    updated_at: new Date(),
-    deleted_at: null,
-  }));
+
+  const pdfAttachments = await Promise.all(
+    samplePDFs.map(async (filePath, index) => {
+      const fileName = path.basename(filePath);
+      const fileUrl = await uploadPDF(filePath, fileName);
+
+      return {
+        bulletin_id: bulletins[index % bulletins.length].id,
+        file_path: fileUrl,
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+      };
+    }),
+  );
 
   await prisma.pDFAttachment.createMany({ data: pdfAttachments });
 }
@@ -237,13 +340,13 @@ async function seedPDFAttachments() {
 async function main() {
   await createImageBucketIfNotExists();
   await createBucketIfNotExists();
-  await seedUsers();
   await seedLocations();
   await seedEvents();
   await seedPosters();
   await seedCategories();
   await seedBulletins();
   await seedPDFAttachments();
+  await seedUsers();
 }
 
 main()
