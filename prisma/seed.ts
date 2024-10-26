@@ -4,6 +4,7 @@ import { faker } from '@faker-js/faker';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as mime from 'mime-types';
+import { Bulletin } from '@prisma/client';
 
 const prisma = new PrismaService();
 const supabase = new SupabaseService();
@@ -329,16 +330,18 @@ async function seedBulletins() {
 
   const categories = await prisma.category.findMany();
 
-  const bulletins = bulletinTitles.map((title) => ({
+  const bulletins: Omit<Bulletin, 'id'>[] = bulletinTitles.map((title) => ({
     title,
     content: faker.lorem.paragraphs(2),
     category_id: faker.helpers.arrayElement(categories).id,
     author: faker.name.fullName(),
     created_at: new Date(),
     updated_at: new Date(),
+    published_at: new Date(),
+    deleted_at: null,
   }));
 
-  await prisma.bulletin.createMany({ data: bulletins as any });
+  await prisma.bulletin.createMany({ data: bulletins });
 }
 
 async function seedPDFAttachments() {
