@@ -30,6 +30,18 @@ export class AuthController {
     }
   }
 
+  @Post('logout')
+  async logout(@Response() res: Res) {
+    try {
+      await this.authService.signOut();
+      return res.status(HttpStatus.OK).json({ message: 'Logout successful' });
+    } catch (error) {
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: error.message || 'Failed to logout' });
+    }
+  }
+
   @Get('user')
   async getUser() {
     const user = await this.supabaseService.getCurrentSession();

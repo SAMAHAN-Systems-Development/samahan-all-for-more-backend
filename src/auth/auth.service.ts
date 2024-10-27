@@ -37,6 +37,11 @@ export class AuthService {
     return;
   }
 
+  async signOut() {
+    await this.supabaseService.signOutSupabaseUser();
+    return;
+  }
+
   async getUserInfoBySupabaseUserId(
     supabaseUserId: string,
   ): Promise<{ email: string; userType: string }> {
