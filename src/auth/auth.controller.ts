@@ -19,7 +19,7 @@ export class AuthController {
 
   @Get('user')
   async getUser() {
-    const user = await this.supabaseService.getCurrentUser();
+    const user = await this.supabaseService.getCurrentSession();
     return user;
   }
 }
