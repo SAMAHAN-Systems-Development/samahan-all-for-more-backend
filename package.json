@@ -53,6 +53,7 @@
     "class-validator": "^0.14.0",
     "dayjs": "^1.11.10",
     "lint-staged": "^15.2.8",
+    "mime-types": "^2.1.35",
     "nestjs-typeorm-paginate": "^4.0.4",
     "nodemailer": "^6.9.8",
     "npm-check-updates": "^16.14.17",
