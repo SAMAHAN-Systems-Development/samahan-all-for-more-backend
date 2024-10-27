@@ -54,6 +54,14 @@ export class SupabaseService {
     return user;
   }
 
+  async getCurrentSession() {
+    const { data, error } = await this.supabase.auth.getSession();
+    if (error) {
+      throw new HttpException('Invalid Credentials', HttpStatus.FORBIDDEN);
+    }
+    return data;
+  }
+
   async createSupabaseUser(email: string, password: string): Promise<any> {
     const { data, error } = await this.supabase.auth.signUp({
       email,
