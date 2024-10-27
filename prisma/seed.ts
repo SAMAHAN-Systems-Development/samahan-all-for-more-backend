@@ -37,7 +37,7 @@ async function createImageBucketIfNotExists() {
       const { data, error } = await supabase
         .getSupabase()
         .storage.createBucket(imageBucketName, {
-          public: false,
+          public: true,
           allowedMimeTypes: [
             'image/jpeg',
             'image/png',
@@ -79,7 +79,7 @@ async function createBucketIfNotExists() {
       const { data, error } = await supabase
         .getSupabase()
         .storage.createBucket(bucketName, {
-          public: false,
+          public: true,
           allowedMimeTypes: ['application/pdf'],
         });
 
@@ -246,7 +246,7 @@ async function uploadPDF(filePath: string, fileName: string) {
     throw new Error(`Failed to upload PDF '${fileName}': ${error.message}`);
   }
 
-  const fullPdfUrl = `https://${process.env.SUPABASE_URL}/storage/v1/object/public/${pdfBucketName}/${fileName}`;
+  const fullPdfUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/${pdfBucketName}/${fileName}`;
 
   return fullPdfUrl;
 }
@@ -260,7 +260,7 @@ async function seedPosters() {
       const fileName = path.basename(filePath);
       const fileUrl = await uploadPoster(filePath, fileName); // Do not remove
 
-      const fullImageUrl = `https://${process.env.SUPABASE_URL}/storage/v1/object/public/${imageBucketName}/${fileName}`;
+      const fullImageUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/${imageBucketName}/${fileName}`;
 
       return {
         event_id: events[index % events.length].id,
