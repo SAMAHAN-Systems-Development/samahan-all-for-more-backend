@@ -44,6 +44,7 @@ export class EventService {
   ) {
     const {
       name,
+      email,
       description,
       registration_link,
       start_time,
@@ -75,6 +76,7 @@ export class EventService {
         const newEvent = await prisma.event.create({
           data: {
             name,
+            email,
             description,
             registration_link,
             start_time: new Date(start_time),
@@ -141,6 +143,7 @@ export class EventService {
 
       const {
         name,
+        email,
         description,
         registration_link,
         start_time,
@@ -169,6 +172,7 @@ export class EventService {
             where: { id },
             data: {
               name,
+              email,
               description,
               registration_link,
               start_time: new Date(start_time),

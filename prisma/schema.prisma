@@ -30,6 +30,7 @@ model Event {
   id               Int      @id @default(autoincrement())
   location_id      Int
   name             String
+  email            String
   description      String
   registration_link String
   start_time       DateTime

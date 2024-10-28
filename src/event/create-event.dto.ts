@@ -1,11 +1,22 @@
 import { Transform } from 'class-transformer';
-import { IsInt, IsISO8601, IsNotEmpty, IsString, IsUrl } from 'class-validator';
+import {
+  IsEmail,
+  IsInt,
+  IsISO8601,
+  IsNotEmpty,
+  IsString,
+  IsUrl,
+} from 'class-validator';
 import { IsStartTimeBeforeEndTime } from './is-start-time-before-end-time.constraint';
 
 export class CreateEventDto {
   @IsString()
   @IsNotEmpty()
   name: string;
+
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
 
   @IsString()
   @IsNotEmpty()

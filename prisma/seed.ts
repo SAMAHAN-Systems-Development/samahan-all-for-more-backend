@@ -165,15 +165,49 @@ async function seedLocations() {
 
 async function seedEvents() {
   const locations = await prisma.location.findMany();
-  const events = Array.from({ length: 50 }).map(() => {
+
+  const emails = [
+    'crgreyes@addu.edu.ph',
+    'univ.library@addu.edu.ph',
+    'theology@addu.edu.ph',
+    'careercenter@addu.edu.ph',
+    'languagecenter@addu.edu.ph',
+  ];
+
+  const eventNames = [
+    'SAMAHAN Townhall 2024',
+    'Bloomsbury Cite Them Right User Training 2024',
+    'Sacrament of Confirmation for College Students',
+    'Japan Exchange and Teaching (JET) Program Online Information Session',
+    'Davao Bisaya Course',
+  ];
+
+  const descriptions = [
+    'The SAMAHAN Townhall 2024 is an essential event designed to foster meaningful dialogue between the SAMAHAN organization and the student body. By initiating a public forum, we open channels of communication that enable us to establish genuine connections with students. This forum serves as a platform for SAMAHAN to share its current initiatives and strategic goals, ensuring that students are well-informed about the efforts and directions being pursued. The transparency and accessibility of this dialogue not only build trust but also empower students to become active participants in shaping the future of their community.',
+    'This school year, the University Library and Audio-Visual Center subscribes to Bloomsbury Cite Them Right, an online platform designed to advise students and researchers on how to reference their research sources correctly. Cite Them Right (CTR) is a comprehensive platform that offers a wide range of referencing styles, including APA, Chicago, Harvard, IEEE, and MLA. It also provides guidance on referencing any source, along with articles and videos that address common referencing queries, such as avoiding plagiarism and understanding the differences between secondary and primary sources. CTR and other online databases are available at the Remote Library: https://remotelibrary.addu.edu.ph/. We encourage all the students and faculty to explore and use this new resource to enhance research and teaching-learning experience.',
+    'The Theology Department invites our AdDU College students who have not yet received the sacrament of Confirmation to avail of such sacrament on November 11, 2024. Please feel free to contact the department at theology@addu.edu.ph for further queries.',
+    "The Japan Exchange and Teaching (JET) Programme, established in 1987, aims to promote grassroots internationalization between Japan and participating countries, including the Philippines. It is one of the biggest exchange programs in the world. The participants are mainly deployed to elementary, junior high, and senior high schools as assistant language teachers (ALTs) to help Japanese teachers in their foreign language classes, particularly English. Others work as coordinators for international relations (CIRs) in local government offices and assist in international exchange activities. More importantly, JET Programme participants act as cultural ambassadors of the Philippines in Japan. The JET Programme offers Filipinos an amazing chance to immerse themselves in Japan's vibrant culture while also sharing the beauty of the Philippines with the local Japanese community. For teachers (and future teachers), this is also a once-in-a-lifetime opportunity to learn about and experience Japan's education system. For more information, download this information packet about the JET Program here - https://bit.ly/JETxADDU_InfoPacket24",
+    "Introducing AdDU's first Davao Bisaya Course for all foreign students who want to learn our deep, rich, and unique dialect. Don't miss this incredible opportunity to connect, communicate, and collaborate with our fellow Davaoeños!",
+  ];
+
+  const registrationLinks = [
+    'https://forms.gle/8CsWW2DNsnJTJXwQ7',
+    'https://docs.google.com/forms/d/e/1FAIpQLSfuWmsopGDxkdXKZehFDhhbbzAx6L6eIvBkEPEz5G2Pjycf5Q/viewform?pli=1',
+    'https://docs.google.com/forms/d/e/1FAIpQLSfCusnJv1ZmwDew71EGTbaySuTOxn92pe1HcZLnTFxfBEu9Ig/viewform',
+    'https://bit.ly/JETxADDU',
+    'https://forms.gle/6DM4nj6EikNLF6rKA',
+  ];
+
+  const events = eventNames.map((name, index) => {
     const startTime = faker.date.future();
     const endTime = new Date(startTime.getTime() + 24 * 60 * 60 * 1000);
 
     return {
       location_id: faker.helpers.arrayElement(locations).id,
-      name: faker.lorem.words(3),
-      description: faker.lorem.paragraph(),
-      registration_link: faker.internet.url(),
+      name: name,
+      email: emails[index % emails.length],
+      description: descriptions[index],
+      registration_link: registrationLinks[index],
       start_time: startTime,
       end_time: endTime,
       created_at: new Date(),
