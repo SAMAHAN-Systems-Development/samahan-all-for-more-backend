@@ -45,6 +45,7 @@ export class EventService {
     const {
       name,
       email,
+      department_name,
       description,
       registration_link,
       start_time,
@@ -77,6 +78,7 @@ export class EventService {
           data: {
             name,
             email,
+            department_name,
             description,
             registration_link,
             start_time: new Date(start_time),
@@ -144,6 +146,7 @@ export class EventService {
       const {
         name,
         email,
+        department_name,
         description,
         registration_link,
         start_time,
@@ -173,6 +176,7 @@ export class EventService {
             data: {
               name,
               email,
+              department_name,
               description,
               registration_link,
               start_time: new Date(start_time),

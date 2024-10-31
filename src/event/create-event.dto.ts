@@ -39,4 +39,8 @@ export class CreateEventDto {
   @IsNotEmpty()
   @Transform(({ value }) => Number(value))
   location_id: number;
+
+  @IsString()
+  @IsNotEmpty()
+  department_name: string;
 }
