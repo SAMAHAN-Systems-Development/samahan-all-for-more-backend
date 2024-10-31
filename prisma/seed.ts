@@ -198,6 +198,14 @@ async function seedEvents() {
     'https://forms.gle/6DM4nj6EikNLF6rKA',
   ];
 
+  const departmentNames = [
+    'SAMAHAN',
+    'University Library',
+    'Theology Department, School of Arts and Sciences',
+    'Career Center Office',
+    'Ateneo de Davao - Language Center',
+  ];
+
   const events = eventNames.map((name, index) => {
     const startTime = faker.date.future();
     const endTime = new Date(startTime.getTime() + 24 * 60 * 60 * 1000);
@@ -213,6 +221,7 @@ async function seedEvents() {
       created_at: new Date(),
       updated_at: new Date(),
       thumbnail: faker.image.url(),
+      department_name: departmentNames[index],
     };
   });
 

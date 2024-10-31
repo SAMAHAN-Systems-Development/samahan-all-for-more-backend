@@ -41,6 +41,7 @@ model Event {
   location         Location @relation(fields: [location_id], references: [id])
   posters          Poster[]
   thumbnail        String
+  department_name  String
 }
 
 model Poster {
