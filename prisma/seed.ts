@@ -211,18 +211,37 @@ async function seedEvents() {
     'SAMAHAN Systems Development',
   ];
 
-  const events = eventNames.map((name, index) => {
-    const startTime = faker.date.future();
-    const endTime = new Date(startTime.getTime() + 24 * 60 * 60 * 1000);
+  const startTimes = [
+    new Date('2024-10-16T15:40:00'),
+    new Date('2024-10-28T16:00:00'),
+    new Date('2024-11-11T00:00:00'),
+    new Date('2024-10-30T15:40:00'),
+    new Date('2024-11-05T09:00:00'),
+    new Date('2024-11-11T16:00:00'),
+  ];
 
+  const endTimes = [
+    new Date('2024-10-16T17:30:00'),
+    new Date('2024-10-28T17:00:00'),
+    new Date('2024-11-11T23:59:59'),
+    new Date('2024-10-30T17:00:00'),
+    new Date('2024-11-05T11:00:00'),
+    new Date('2024-11-11T17:30:00'),
+  ];
+
+  const events = eventNames.map((name, index) => {
     return {
-      location_id: faker.helpers.arrayElement(locations).id,
+      location_id:
+        departmentNames[index] ===
+        'Theology Department, School of Arts and Sciences'
+          ? null
+          : faker.helpers.arrayElement(locations).id,
       name: name,
       email: emails[index % emails.length],
       description: descriptions[index],
       registration_link: registrationLinks[index],
-      start_time: startTime,
-      end_time: endTime,
+      start_time: startTimes[index],
+      end_time: endTimes[index],
       created_at: new Date(),
       updated_at: new Date(),
       thumbnail: faker.image.url(),
@@ -371,23 +390,49 @@ async function seedBulletins() {
     'A Resolution Confirming the Appointment of Alex Dave Escalante as the Department Director of the Department of Disaster Risk Reduction and Management',
     'A Resolution Confirming the Appointment of Francis Rhaey Casas as the Department Director for the SAMAHAN Systems Development',
     'A Resolution Confirming the Appointment of Jan A.G. Adrian Lariego as the Head Commissioner of Commission on Audit',
-    'A Resolution Endorsing the Cluster Participation Incentive Mechanism for Students in the Natural Sciences and Mathematics Cluster',
     'A Resolution Urging the Ateneo de Davao University Committee on Anti-Sexual Harassment that in Combating Sexual Harassment - to Strengthen Reporting Mechanisms and Support Systems for Ateneo de Davao University Students',
     'A Resolution Urging the Student Executive Councils (SECs) of the Ateneo de Davao University to Strengthen their Student Judicial Court Application Campaign and Modifying Applicant Qualifications',
+    'An Act Establishing the SAMAHAN Political Affairs and Engagements Department',
+    'An Act Repealing the 2023 Student Assembly Code of Legislative Procedures and Implementing the 2024 Student Assembly Code of Internal Procedures',
+  ];
+
+  const bulletinContents = [
+    'Resolution No. 001-2425',
+    'Resolution No. 002-2425',
+    'Resolution No. 003-2425',
+    'Resolution No. 004-2425',
+    'Resolution No. 005-2425',
+    'Resolution No. 006-2425',
+    'Resolution No. 007-2425',
+    'Resolution No. 008-2425',
+    'Resolution No. 009-2425',
+    'Resolution No. 010-2425',
+    'Resolution No. 011-2425',
+    'Resolution No. 012-2425',
+    'Resolution No. 014-2425',
+    'Resolution No. 015-2425',
+    'Resolution No. 016-2425',
+    'Resolution No. 017-2425',
+    'Resolution No. 018-2425',
+    'Resolution No. 019-2425',
+    'SAMAHAN Act No. 1 of 2024',
+    'SAMAHAN Act No. 2 of 2024',
   ];
 
   const categories = await prisma.category.findMany();
 
-  const bulletins: Omit<Bulletin, 'id'>[] = bulletinTitles.map((title) => ({
-    title,
-    content: faker.lorem.paragraphs(2),
-    category_id: faker.helpers.arrayElement(categories).id,
-    author: faker.name.fullName(),
-    created_at: new Date(),
-    updated_at: new Date(),
-    published_at: new Date(),
-    deleted_at: null,
-  }));
+  const bulletins: Omit<Bulletin, 'id'>[] = bulletinTitles.map(
+    (title, index) => ({
+      title,
+      content: bulletinContents[index],
+      category_id: faker.helpers.arrayElement(categories).id,
+      author: faker.name.fullName(),
+      created_at: new Date(),
+      updated_at: new Date(),
+      published_at: new Date(),
+      deleted_at: null,
+    }),
+  );
 
   await prisma.bulletin.createMany({ data: bulletins });
 }
