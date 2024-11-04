@@ -172,14 +172,16 @@ async function seedEvents() {
     'theology@addu.edu.ph',
     'careercenter@addu.edu.ph',
     'languagecenter@addu.edu.ph',
+    'samahan.sd@addu.edu.ph	',
   ];
 
   const eventNames = [
-    'SAMAHAN Townhall 2024',
+    'Samahan Townhall 2024',
     'Bloomsbury Cite Them Right User Training 2024',
     'Sacrament of Confirmation for College Students',
     'Japan Exchange and Teaching (JET) Program Online Information Session',
     'Davao Bisaya Course',
+    "SKILLS CABIN: SAMAHAN SysDev Talks & Workshops '24",
   ];
 
   const descriptions = [
@@ -188,6 +190,7 @@ async function seedEvents() {
     'The Theology Department invites our AdDU College students who have not yet received the sacrament of Confirmation to avail of such sacrament on November 11, 2024. Please feel free to contact the department at theology@addu.edu.ph for further queries.',
     "The Japan Exchange and Teaching (JET) Programme, established in 1987, aims to promote grassroots internationalization between Japan and participating countries, including the Philippines. It is one of the biggest exchange programs in the world. The participants are mainly deployed to elementary, junior high, and senior high schools as assistant language teachers (ALTs) to help Japanese teachers in their foreign language classes, particularly English. Others work as coordinators for international relations (CIRs) in local government offices and assist in international exchange activities. More importantly, JET Programme participants act as cultural ambassadors of the Philippines in Japan. The JET Programme offers Filipinos an amazing chance to immerse themselves in Japan's vibrant culture while also sharing the beauty of the Philippines with the local Japanese community. For teachers (and future teachers), this is also a once-in-a-lifetime opportunity to learn about and experience Japan's education system. For more information, download this information packet about the JET Program here - https://bit.ly/JETxADDU_InfoPacket24",
     "Introducing AdDU's first Davao Bisaya Course for all foreign students who want to learn our deep, rich, and unique dialect. Don't miss this incredible opportunity to connect, communicate, and collaborate with our fellow Davaoeños!",
+    'There is power in continuous learning and growth. With this, the Department of Systems Development, an organization dedicated to fostering technological growth and innovation within the SAMAHAN and Ateneo community, along with the Office of the SAMAHAN Secretary-General, aims to contribute to a more skills-equipped community through the Skills Cabin. This Skills Cabin segment entitled “SysDev Talks and Workshops” is a capacity building offered to the Ateneans to ensure the quality of work produced regardless of the organization they are serving. This initiative aims to provide its members and interested individuals with valuable insights and practical knowledge on various technology-related concepts. The event is designed to equip participants with skills that are essential in today’s fast-evolving tech landscape, covering areas such as system development and emerging technologies.',
   ];
 
   const registrationLinks = [
@@ -196,6 +199,7 @@ async function seedEvents() {
     'https://docs.google.com/forms/d/e/1FAIpQLSfCusnJv1ZmwDew71EGTbaySuTOxn92pe1HcZLnTFxfBEu9Ig/viewform',
     'https://bit.ly/JETxADDU',
     'https://forms.gle/6DM4nj6EikNLF6rKA',
+    'https://drive.google.com/file/d/1NDL-lAQWuZHfAbf2ChxCiBR5nkbwFi_5/view?usp=sharing',
   ];
 
   const departmentNames = [
@@ -204,6 +208,7 @@ async function seedEvents() {
     'Theology Department, School of Arts and Sciences',
     'Career Center Office',
     'Ateneo de Davao - Language Center',
+    'SAMAHAN Systems Development',
   ];
 
   const events = eventNames.map((name, index) => {
