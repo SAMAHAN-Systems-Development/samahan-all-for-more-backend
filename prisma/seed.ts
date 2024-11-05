@@ -165,6 +165,7 @@ async function seedLocations() {
 
 async function seedEvents() {
   const locations = await prisma.location.findMany();
+  const imageBucketName = process.env.POSTER_IMAGE_BUCKET;
 
   const emails = [
     'crgreyes@addu.edu.ph',
@@ -229,25 +230,44 @@ async function seedEvents() {
     new Date('2024-11-11T17:30:00'),
   ];
 
-  const events = eventNames.map((name, index) => {
-    return {
-      location_id:
+  const thumbnailPaths = [
+    'seed_files/posters/smhn-logo-white.jpg',
+    'seed_files/posters/UNIV_LIB.jpg',
+    'seed_files/posters/smhn-logo-white.jpg',
+    'seed_files/posters/CCO.jpg',
+    'seed_files/posters/LC.jpg',
+    'seed_files/posters/SYSDEV.jpg',
+  ];
+
+  const events = await Promise.all(
+    eventNames.map(async (name, index) => {
+      const locationId =
         departmentNames[index] ===
         'Theology Department, School of Arts and Sciences'
           ? null
-          : faker.helpers.arrayElement(locations).id,
-      name: name,
-      email: emails[index % emails.length],
-      description: descriptions[index],
-      registration_link: registrationLinks[index],
-      start_time: startTimes[index],
-      end_time: endTimes[index],
-      created_at: new Date(),
-      updated_at: new Date(),
-      thumbnail: faker.image.url(),
-      department_name: departmentNames[index],
-    };
-  });
+          : faker.helpers.arrayElement(locations).id;
+
+      const thumbnailPath = thumbnailPaths[index];
+      const fileName = path.basename(thumbnailPath);
+      const fileUrl = await uploadPoster(thumbnailPath, fileName); // Upload the thumbnail
+
+      const fullImageUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/${imageBucketName}/${fileName}`;
+
+      return {
+        location_id: locationId,
+        name: name,
+        email: emails[index % emails.length],
+        description: descriptions[index],
+        registration_link: registrationLinks[index],
+        start_time: startTimes[index],
+        end_time: endTimes[index],
+        created_at: new Date(),
+        updated_at: new Date(),
+        thumbnail: fullImageUrl, // Save the thumbnail URL
+        department_name: departmentNames[index],
+      };
+    }),
+  );
 
   await prisma.event.createMany({ data: events });
 }
@@ -463,7 +483,8 @@ async function main() {
   await createBucketIfNotExists();
   await seedLocations();
   await seedEvents();
-  await seedPosters();
+  // TODO: No sample data available for events with multiple images. Uncomment and configure seedPosters() when sample data is provided.
+  // await seedPosters();
   await seedCategories();
   await seedBulletins();
   await seedPDFAttachments();
