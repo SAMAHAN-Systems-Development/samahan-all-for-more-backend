@@ -139,26 +139,45 @@ async function seedUsers() {
 }
 
 async function seedLocations() {
-  const uniqueNames = new Set<string>();
-  const locations: {
-    name: string;
-    address: string;
-    created_at: Date;
-    updated_at: Date;
-  }[] = [];
-
-  while (uniqueNames.size < 10) {
-    const name = faker.location.street();
-    if (!uniqueNames.has(name)) {
-      uniqueNames.add(name);
-      locations.push({
-        name,
-        address: faker.location.streetAddress(),
-        created_at: new Date(),
-        updated_at: new Date(),
-      });
-    }
-  }
+  const locations = [
+    {
+      name: 'Arrupe Hall',
+      address: '',
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      name: 'Miguel Library Learning Commons (MPLC)',
+      address:
+        'Ateneo de Davao University, 2F CCFC Bldg, Roxas Ave., Davao City',
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      name: 'TBA',
+      address: '',
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      name: 'via Zoom',
+      address: '',
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      name: 'Ateneo Language Center',
+      address: '5/F F513',
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      name: 'Conference Room D',
+      address: '3rd Floor, Ricci Hall, CCFC Building',
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+  ];
 
   await prisma.location.createMany({ data: locations });
 }
@@ -231,30 +250,27 @@ async function seedEvents() {
   ];
 
   const thumbnailPaths = [
-    'seed_files/posters/smhn-logo-white.jpg',
-    'seed_files/posters/UNIV_LIB.jpg',
-    'seed_files/posters/smhn-logo-white.jpg',
-    'seed_files/posters/CCO.jpg',
-    'seed_files/posters/LC.jpg',
-    'seed_files/posters/SYSDEV.jpg',
+    'smhn-logo-white.jpg',
+    'UNIV_LIB.jpg',
+    'smhn-logo-white.jpg',
+    'CCO.jpg',
+    'LC.jpg',
+    'SYSDEV.jpg',
   ];
 
   const events = await Promise.all(
     eventNames.map(async (name, index) => {
-      const locationId =
-        departmentNames[index] ===
-        'Theology Department, School of Arts and Sciences'
-          ? null
-          : faker.helpers.arrayElement(locations).id;
-
       const thumbnailPath = thumbnailPaths[index];
       const fileName = path.basename(thumbnailPath);
-      const fileUrl = await uploadPoster(thumbnailPath, fileName); // Upload the thumbnail
-
+      const fileUrl = await uploadPoster(
+        `seed_files/posters/${thumbnailPath}`,
+        fileName,
+      ); // Do not remove
       const fullImageUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/${imageBucketName}/${fileName}`;
+      const location = locations[index % locations.length];
 
       return {
-        location_id: locationId,
+        location_id: location.id,
         name: name,
         email: emails[index % emails.length],
         description: descriptions[index],
@@ -263,7 +279,7 @@ async function seedEvents() {
         end_time: endTimes[index],
         created_at: new Date(),
         updated_at: new Date(),
-        thumbnail: fullImageUrl, // Save the thumbnail URL
+        thumbnail: fullImageUrl,
         department_name: departmentNames[index],
       };
     }),
