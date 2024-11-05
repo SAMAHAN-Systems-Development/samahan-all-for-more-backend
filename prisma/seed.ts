@@ -350,20 +350,23 @@ async function seedCategories() {
     updated_at: Date;
   }[] = [
     {
-      name: 'Bills',
-      description: faker.lorem.sentence(),
+      name: 'Acts',
+      description:
+        'A piece of legislation used to create policy in order to carry out the principles of the SAMAHAN Constitution. It is crafted and passed by the Student Assembly and approved by the SAMAHAN President. It can only be repealed by a similar act of the Assembly.',
       created_at: new Date(),
       updated_at: new Date(),
     },
     {
       name: 'Memorandums',
-      description: faker.lorem.sentence(),
+      description:
+        'Official communications issued by the SAMAHAN to convey important information, directives, or updates to members, ensuring transparency and awareness of relevant matters within the organization.',
       created_at: new Date(),
       updated_at: new Date(),
     },
     {
       name: 'Resolutions',
-      description: faker.lorem.sentence(),
+      description:
+        'A piece of legislation that serves as official statements adopted by the Student Assembly to address issues impacting the student body. They reflect unified stances on specific concerns, advocating for reforms in university policies and practices. Resolutions are also used by the Student Assembly to affirm or reject appointments.',
       created_at: new Date(),
       updated_at: new Date(),
     },
@@ -386,10 +389,10 @@ async function seedBulletins() {
     'A Resolution Confirming the Appointment of Krisha Faye Barot as the Department Director of the Department of External Affairs',
     'A Resolution Confirming the Appointment of Ralph Rainier Abarca as the Department Director of the SAMAHAN Logistics Department',
     'A Resolution Confirming the Appointment of Aibor Kennen Denila as the Department Director of the SAMAHAN Research and Development',
-    'A Resolution Confirming the Appointment of Mary Jastine Lapating as the Department Director of the Ecotoneo Student Unit',
     'A Resolution Confirming the Appointment of Alex Dave Escalante as the Department Director of the Department of Disaster Risk Reduction and Management',
     'A Resolution Confirming the Appointment of Francis Rhaey Casas as the Department Director for the SAMAHAN Systems Development',
     'A Resolution Confirming the Appointment of Jan A.G. Adrian Lariego as the Head Commissioner of Commission on Audit',
+    'A Resolution Endorsing the Cluster Participation Incentive Mechanism for Students in the Natural Sciences and Mathematics Cluster',
     'A Resolution Urging the Ateneo de Davao University Committee on Anti-Sexual Harassment that in Combating Sexual Harassment - to Strengthen Reporting Mechanisms and Support Systems for Ateneo de Davao University Students',
     'A Resolution Urging the Student Executive Councils (SECs) of the Ateneo de Davao University to Strengthen their Student Judicial Court Application Campaign and Modifying Applicant Qualifications',
     'An Act Establishing the SAMAHAN Political Affairs and Engagements Department',
@@ -419,17 +422,70 @@ async function seedBulletins() {
     'SAMAHAN Act No. 2 of 2024',
   ];
 
+  const publishedDates = [
+    new Date('2024-09-04T09:00:00'),
+    new Date('2024-09-04T09:00:00'),
+    new Date('2024-09-21T09:00:00'),
+    new Date('2024-09-21T09:00:00'),
+    new Date('2024-09-21T09:00:00'),
+    new Date('2024-09-21T09:00:00'),
+    new Date('2024-09-21T09:00:00'),
+    new Date('2024-09-21T09:00:00'),
+    new Date('2024-09-21T09:00:00'),
+    new Date('2024-09-21T09:00:00'),
+    new Date('2024-09-21T09:00:00'),
+    new Date('2024-09-21T09:00:00'),
+    new Date('2024-09-21T09:00:00'),
+    new Date('2024-09-21T09:00:00'),
+    new Date('2024-10-05T09:00:00'),
+    new Date('2024-10-05T09:00:00'),
+    new Date('2024-10-05T09:00:00'),
+    new Date('2024-10-16T09:00:00'),
+    new Date('2024-10-08T09:00:00'),
+    new Date('2024-10-14T09:00:00'),
+  ];
+
+  const bulletinCategories = [
+    'Resolutions',
+    'Resolutions',
+    'Resolutions',
+    'Resolutions',
+    'Resolutions',
+    'Resolutions',
+    'Resolutions',
+    'Resolutions',
+    'Resolutions',
+    'Resolutions',
+    'Resolutions',
+    'Resolutions',
+    'Resolutions',
+    'Resolutions',
+    'Resolutions',
+    'Resolutions',
+    'Resolutions',
+    'Resolutions',
+    'Acts',
+    'Acts',
+  ];
+
+  const author = 'Office of the Legislative Secretary';
+
   const categories = await prisma.category.findMany();
+
+  const categoryMap = categories.reduce((map, category) => {
+    map[category.name] = category.id;
+    return map;
+  }, {});
 
   const bulletins: Omit<Bulletin, 'id'>[] = bulletinTitles.map(
     (title, index) => ({
       title,
       content: bulletinContents[index],
-      category_id: faker.helpers.arrayElement(categories).id,
-      author: faker.name.fullName(),
+      category_id: categoryMap[bulletinCategories[index]],
+      author,
       created_at: new Date(),
       updated_at: new Date(),
-      published_at: new Date(),
+      published_at: publishedDates[index],
       deleted_at: null,
     }),
   );
