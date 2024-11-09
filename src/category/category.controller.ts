@@ -15,11 +15,11 @@ import { AuthGuard } from '../auth/auth.guard';
 import { UpdateCategoryDto } from './updateCategory.dto';
 
 @Controller('/categories')
-@UseGuards(AuthGuard)
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoryService.createCategory(createCategoryDto);
   }
@@ -30,6 +30,7 @@ export class CategoryController {
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard)
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCategoryDto: UpdateCategoryDto,
@@ -38,6 +39,7 @@ export class CategoryController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   async delete(@Param('id', ParseIntPipe) id: number) {
     return this.categoryService.deleteCategory(id);
   }
