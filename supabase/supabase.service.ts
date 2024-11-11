@@ -8,7 +8,7 @@ import { LoginDto } from 'src/auth/auth.dto';
 export class SupabaseService {
   private supabase: SupabaseClient;
   constructor() {
-    const supabaseURL = process.env.SUPABASE_URL;
+    const supabaseURL = process.env.SUPABASE_SERVICE_URL;
     const supabaseAPIKey = process.env.SUPABASE_KEY;
     this.supabase = createClient(supabaseURL, supabaseAPIKey);
   }
