@@ -155,7 +155,7 @@ async function seedLocations() {
     },
     {
       name: 'TBA',
-      address: '',
+      address: 'Venue will be announced in the emails of the registrants',
       created_at: new Date(),
       updated_at: new Date(),
     },
@@ -174,6 +174,32 @@ async function seedLocations() {
     {
       name: 'Conference Room D',
       address: '3rd Floor, Ricci Hall, CCFC Building',
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      name: 'Bapa Benny Tudtud Auditorium',
+      address: '',
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      name: 'Ateneo de Davao University',
+      address: '',
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      name: 'Miguel Pro Learning Commons Multipurpose Room (MPR)',
+      address:
+        '2nd Floor of the Community Center of the First Companions, ADDU Jacinto Campus.',
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      name: 'MPR, Miguel Pro Learning Commons',
+      address:
+        'Those who cannot join the onsite training may opt to attend via Zoom.',
       created_at: new Date(),
       updated_at: new Date(),
     },
@@ -278,6 +304,8 @@ async function seedEvents() {
     'Bachelor of Science in Accountancy - 4A',
   ];
 
+  const Locations = [1, 2, 3, 4, 5, 6, 9, 10, 8, 3, 3, 7, 7];
+
   const startTimes = [
     new Date('2024-10-16T15:40:00'),
     new Date('2024-10-28T16:00:00'),
@@ -338,7 +366,7 @@ async function seedEvents() {
       const location = locations[index % locations.length];
 
       return {
-        location_id: location.id,
+        location_id: Locations[index],
         name: name,
         email: emails[index % emails.length],
         description: descriptions[index],
