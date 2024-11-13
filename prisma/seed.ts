@@ -193,6 +193,13 @@ async function seedEvents() {
     'careercenter@addu.edu.ph',
     'languagecenter@addu.edu.ph',
     'samahan.sd@addu.edu.ph	',
+    'careercenter@addu.edu.ph',
+    'univ.library@addu.edu.ph',
+    'abka@addu.edu.ph',
+    'samahan.academicaffairs@addu.edu.ph',
+    'samahan.productions@addu.edu.ph',
+    'ADDUFASEC2425@gmail.com',
+    'ADDUFASEC2425@gmail.com',
   ];
 
   const eventNames = [
@@ -202,15 +209,41 @@ async function seedEvents() {
     'Japan Exchange and Teaching (JET) Program Online Information Session',
     'Davao Bisaya Course',
     "SKILLS CABIN: SAMAHAN SysDev Talks & Workshops '24",
+    'Information Session on Studying in Australia',
+    'User Training on EBSCOHost Research Databases',
+    'The 𝟮𝗻𝗱 𝗕𝗹𝘂𝗲 𝗞𝗻𝗶𝗴𝗵𝘁𝘀 𝗟𝗲𝗮𝗱𝗲𝗿𝘀𝗵𝗶𝗽 𝗖𝗼𝗻𝗳𝗲𝗿𝗲𝗻𝗰𝗲',
+    'Level Up for Finals: The SAMAHAN DAA Tutorials',
+    'Set the Stage: Event Production 101 Workshop',
+    '𝐖𝐨𝐫𝐤𝐩𝐥𝐚𝐜𝐞 𝟏𝟎𝟏: 𝐋𝐚𝐛𝐨𝐫 𝐋𝐚𝐰𝐬 𝐄𝐯𝐞𝐫𝐲 𝐅𝐫𝐞𝐬𝐡 𝐆𝐫𝐚𝐝𝐮𝐚𝐭𝐞 𝐒𝐡𝐨𝐮𝐥𝐝 𝐊𝐧𝐨𝐰',
+    'Live Secured: Safeguarding Your Future',
   ];
 
   const descriptions = [
     'The SAMAHAN Townhall 2024 is an essential event designed to foster meaningful dialogue between the SAMAHAN organization and the student body. By initiating a public forum, we open channels of communication that enable us to establish genuine connections with students. This forum serves as a platform for SAMAHAN to share its current initiatives and strategic goals, ensuring that students are well-informed about the efforts and directions being pursued. The transparency and accessibility of this dialogue not only build trust but also empower students to become active participants in shaping the future of their community.',
+
     'This school year, the University Library and Audio-Visual Center subscribes to Bloomsbury Cite Them Right, an online platform designed to advise students and researchers on how to reference their research sources correctly. Cite Them Right (CTR) is a comprehensive platform that offers a wide range of referencing styles, including APA, Chicago, Harvard, IEEE, and MLA. It also provides guidance on referencing any source, along with articles and videos that address common referencing queries, such as avoiding plagiarism and understanding the differences between secondary and primary sources. CTR and other online databases are available at the Remote Library: https://remotelibrary.addu.edu.ph/. We encourage all the students and faculty to explore and use this new resource to enhance research and teaching-learning experience.',
+
     'The Theology Department invites our AdDU College students who have not yet received the sacrament of Confirmation to avail of such sacrament on November 11, 2024. Please feel free to contact the department at theology@addu.edu.ph for further queries.',
+
     "The Japan Exchange and Teaching (JET) Programme, established in 1987, aims to promote grassroots internationalization between Japan and participating countries, including the Philippines. It is one of the biggest exchange programs in the world. The participants are mainly deployed to elementary, junior high, and senior high schools as assistant language teachers (ALTs) to help Japanese teachers in their foreign language classes, particularly English. Others work as coordinators for international relations (CIRs) in local government offices and assist in international exchange activities. More importantly, JET Programme participants act as cultural ambassadors of the Philippines in Japan. The JET Programme offers Filipinos an amazing chance to immerse themselves in Japan's vibrant culture while also sharing the beauty of the Philippines with the local Japanese community. For teachers (and future teachers), this is also a once-in-a-lifetime opportunity to learn about and experience Japan's education system. For more information, download this information packet about the JET Program here - https://bit.ly/JETxADDU_InfoPacket24",
+
     "Introducing AdDU's first Davao Bisaya Course for all foreign students who want to learn our deep, rich, and unique dialect. Don't miss this incredible opportunity to connect, communicate, and collaborate with our fellow Davaoeños!",
+
     'There is power in continuous learning and growth. With this, the Department of Systems Development, an organization dedicated to fostering technological growth and innovation within the SAMAHAN and Ateneo community, along with the Office of the SAMAHAN Secretary-General, aims to contribute to a more skills-equipped community through the Skills Cabin. This Skills Cabin segment entitled “SysDev Talks and Workshops” is a capacity building offered to the Ateneans to ensure the quality of work produced regardless of the organization they are serving. This initiative aims to provide its members and interested individuals with valuable insights and practical knowledge on various technology-related concepts. The event is designed to equip participants with skills that are essential in today’s fast-evolving tech landscape, covering areas such as system development and emerging technologies.',
+
+    'Learn how to acquire globally recognized qualifications as we hear from representatives of the following institutions:\n\n- Western Sydney College\n- TKL College\n- Australian Harbour International College\n- National Academy of Professional Studies',
+
+    "EBSCOHost is the biggest online platform among the university's subscriptions. It offers access to discovery service, multi-disciplinary peer-reviewed journals, and academic e-books on the following:\n\n- Academic Search Complete (Multidisciplinary e-journals)\n- Academic e-Books Collection\n- American Theological Library Association (ATLA) Religion Database with Full Text\n- Biomedical Reference Collection: Basic\n- Business Source Complete\n- Cumulated Index in Nursing and Allied Health Literature (CINAHL) with Full Text\n- Communication and Mass Media Complete\n- Computer Source\n- Computers and Applied Sciences Complete\n- Funk & Wagnalls New World Encyclopedia\n- eBook Academic Collection\n- Education Research Complete\n- Education Resource Information Center (ERIC)\n- GreenFile\n- Humanities International Complete\n- Literary Reference Source\n- MAS Ultra - School Edition\n- MEDLine\n- Military and Government Collection\n- Regional Business News\n- Religion and Philosophy Collection\n- Sociology Index (SocIndex) with Full Text\n\nThe University Library encourages all the students and faculty to explore and use the available electronic resources to enhance the research and the teaching-learning experience.",
+
+    "The 2nd Blue Knight Leadership Conference, themed 'Voices of Change: Media, Civil Society, Innovation, and Youth Leadership in Mindanao's Future,' seeks to empower the youth to drive sustainable development and social change within Mindanao. This conference provides a platform for young leaders to engage with pressing issues, focusing on how media, civil society, and innovative leadership intersect to shape the region's future. By fostering collaboration and sharing insights, this event aims to build a generation of proactive leaders equipped to create a more inclusive, just, and resilient Mindanao.",
+
+    "The SAMAHAN Department of Academic Affairs presents 'Level Up for Finals: The SAMAHAN DAA Tutorials.' This initiative is a direct response to student feedback regarding the challenges encountered in certain GE courses and aims to provide targeted academic support to enhance student performance in the upcoming Finals examinations.",
+
+    "The event aims to equip students from different organizations and Student Executive Councils with essential event production skills. Whether you're a seasoned production team member or just starting out, this workshop will help you become more proficient in organizing and managing events on campus.",
+
+    'Start your career with confidence! Learn the essentials of labor laws—your rights, benefits, and protections in the workplace. Equip yourself to make informed decisions and avoid common pitfalls as a new employee. Don’t miss this chance to start strong!',
+
+    'Starting your career journey? Make sure you’re informed about the SSS essentials that protect you as you step into the workforce! Here are some important things every fresh graduate should know about the Social Security System (SSS) in the Philippines.',
   ];
 
   const registrationLinks = [
@@ -220,6 +253,13 @@ async function seedEvents() {
     'https://bit.ly/JETxADDU',
     'https://forms.gle/6DM4nj6EikNLF6rKA',
     'https://drive.google.com/file/d/1NDL-lAQWuZHfAbf2ChxCiBR5nkbwFi_5/view?usp=sharing',
+    'https://bit.ly/ADDUxAUS_InfoSession',
+    'https://tinyurl.com/yc3hm6ka',
+    'http://bit.ly/4fdVgBn ',
+    'https://tinyurl.com/LevelUpGERegistration',
+    'https://tinyurl.com/SetTheStage2024',
+    'https://tinyurl.com/Workplace101',
+    'https://bit.ly/LiveSecured',
   ];
 
   const departmentNames = [
@@ -229,6 +269,13 @@ async function seedEvents() {
     'Career Center Office',
     'Ateneo de Davao - Language Center',
     'SAMAHAN Systems Development',
+    'Career Center Office',
+    'University Library',
+    '𝘈𝘵𝘦𝘯𝘦𝘰 𝘥𝘦 𝘋𝘢𝘷𝘢𝘰 𝘉𝘭𝘶𝘦 𝘒𝘯𝘪𝘨𝘩𝘵 𝘈𝘴𝘴𝘰𝘤𝘪𝘢𝘵𝘪𝘰𝘯',
+    'SAMAHAN Department of Academic Affairs',
+    'Ateneo SAMAHAN Productions',
+    'Bachelor of Science in Accountancy - 4A',
+    'Bachelor of Science in Accountancy - 4A',
   ];
 
   const startTimes = [
@@ -238,6 +285,13 @@ async function seedEvents() {
     new Date('2024-10-30T15:40:00'),
     new Date('2024-11-05T09:00:00'),
     new Date('2024-11-11T16:00:00'),
+    new Date('2014-11-13T15:40:00'),
+    new Date('2024-11-19T14:00:00'),
+    new Date('2024-11-23T15:40:00'),
+    new Date('2024-11-11T15:40:00'),
+    new Date('2024-11-13T15:40:00'),
+    new Date('2024-11-16T14:00:00'),
+    new Date('2024-11-16T08:00:00'),
   ];
 
   const endTimes = [
@@ -247,6 +301,13 @@ async function seedEvents() {
     new Date('2024-10-30T17:00:00'),
     new Date('2024-11-05T11:00:00'),
     new Date('2024-11-11T17:30:00'),
+    new Date('2014-11-13T17:00:00'),
+    new Date('2024-11-19T15:30:00'),
+    new Date('2024-11-23T17:40:00'),
+    new Date('2024-11-11T17:40:00'),
+    new Date('2024-11-13T17:40:00'),
+    new Date('2024-11-16T17:00:00'),
+    new Date('2024-11-16T12:00:00'),
   ];
 
   const thumbnailPaths = [
@@ -256,6 +317,13 @@ async function seedEvents() {
     'CCO.jpg',
     'LC.jpg',
     'SYSDEV.jpg',
+    'CAREER_CENTER_OFFICE.png',
+    'UNIVLIB.png',
+    'BKLC.jpg',
+    'DAA.jpg',
+    'ASP.jpg',
+    'FASEC.jpg',
+    'LIVE_SECURED.jpg',
   ];
 
   const events = await Promise.all(
