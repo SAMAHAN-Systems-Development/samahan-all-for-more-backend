@@ -86,3 +86,24 @@ model PDFAttachment {
   deleted_at  DateTime?
   bulletin    Bulletin  @relation(fields: [bulletin_id], references: [id], onDelete: Cascade)
 }
+
+model Newsfeed {
+  id          Int         @id @default(autoincrement())
+  title       String
+  content     String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  publishedAt DateTime?
+  deletedAt   DateTime?
+  isPublished Boolean     @default(true)
+  images      NewsfeedImage[]
+}
+
+model NewsfeedImage {
+  id          Int         @id @default(autoincrement())
+  newsfeedId  Int
+  imageUrl    String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  newsfeed    Newsfeed    @relation(fields: [newsfeedId], references: [id], onDelete: Cascade)
+}

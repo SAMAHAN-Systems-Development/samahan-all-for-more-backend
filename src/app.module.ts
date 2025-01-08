@@ -9,6 +9,7 @@ import { BulletinModule } from './bulletin/bulletin.module';
 import { CategoryModule } from './category/category.module';
 import { LocationModule } from './location/location.module';
 import { EventModule } from './event/event.module';
+import { NewsfeedModule } from './newsfeed/newsfeed.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { EventModule } from './event/event.module';
     CategoryModule,
     LocationModule,
     EventModule,
+    NewsfeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
