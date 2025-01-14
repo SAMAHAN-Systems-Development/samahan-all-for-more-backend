@@ -1,6 +1,8 @@
 import {
   Controller,
   Post,
+  Get,
+  Param,
   Body,
   UseGuards,
   UsePipes,
@@ -8,6 +10,7 @@ import {
   UseInterceptors,
   UploadedFiles,
   BadRequestException,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { NewsfeedService } from './newsfeed.service';
 import { CreateNewsfeedDto } from './create-newsfeed.dto';
@@ -64,5 +67,15 @@ export class NewsfeedController {
     } catch (error) {
       throw error;
     }
+  }
+
+  @Get()
+  async findAll() {
+    return this.newsfeedService.findAllNewsfeeds();
+  }
+
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.newsfeedService.findNewsfeedById(id);
   }
 }
